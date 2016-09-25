@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_yelp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tastr.tastr.YelpActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Press the button to show the first Resturaunt ID."
+        android:id="@+id/ResturauntID"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:theme="@style/Animation.AppCompat.DropDownUp"
+        tools:layout_constraintTop_creator="1"
+        android:layout_marginTop="16dp"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp" />
+
+    <Button
+        android:text="Test Yelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/testYelpConnection"
+        android:elevation="2dp"
+        tools:layout_constraintTop_creator="1"
+        android:layout_marginTop="184dp"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="120dp"
+        android:layout_marginStart="120dp"
+        android:onClick="yelpClick (YelpActivity)" />
+</android.support.constraint.ConstraintLayout>
