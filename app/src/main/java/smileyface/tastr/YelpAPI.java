@@ -1,28 +1,31 @@
 package smileyface.tastr;
 
 
-        import org.json.simple.JSONArray;
-        import org.json.simple.JSONObject;
-        import org.json.simple.parser.JSONParser;
-        import org.json.simple.parser.ParseException;
-        import org.scribe.builder.ServiceBuilder;
-        import org.scribe.model.OAuthRequest;
-        import org.scribe.model.Response;
-        import org.scribe.model.Token;
-        import org.scribe.model.Verb;
-        import org.scribe.oauth.OAuthService;
         import com.beust.jcommander.JCommander;
-        import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameter;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.scribe.builder.ServiceBuilder;
+import org.scribe.model.OAuthRequest;
+import org.scribe.model.Response;
+import org.scribe.model.Token;
+import org.scribe.model.Verb;
+import org.scribe.oauth.OAuthService;
+
+import java.util.ArrayList;
 
 
 class YelpAPI implements Runnable{
 
-    private static final String API_HOST = "api.yelp.com";
-    private static final String DEFAULT_TERM = "dinner";
-    private static final String DEFAULT_LOCATION = "San Francisco, CA";
-    private static final int SEARCH_LIMIT = 3;
-    private static final String SEARCH_PATH = "/v2/search";
-    private static final String BUSINESS_PATH = "/v2/business";
+    private static String API_HOST = "api.yelp.com";
+    private static String DEFAULT_TERM = "restaurants near me";
+    private static String DEFAULT_LOCATION = "Denton,Texas";
+    private static  int SEARCH_LIMIT = 20;
+    private static String SEARCH_PATH = "/v2/search";
+    private static String BUSINESS_PATH = "/v2/business";
 
     /*
      * Update OAuth credentials below from the YelpAPI Developers API site:
@@ -36,20 +39,34 @@ class YelpAPI implements Runnable{
     private OAuthService service;
     private Token accessToken;
 
-    private static String YelpInfo = "";
+    static ArrayList<String> BusinessIDList = new ArrayList<String>();
 
-    public String getYelpInfo(){
-        return YelpInfo;
+    // Methods for setting default search parameters, fairly self explanatory. Be sure to change these before calling API.run if you want to change the default variables.
+    public void setSearchLimit(int limit){
+        SEARCH_LIMIT = limit;
+    }
+    public void setLocation(String location){
+        DEFAULT_LOCATION = location;
+    }
+    public void setTerm(String term){
+        DEFAULT_TERM = term;
     }
 
-    static private void setYelpInfo(String info){
-
-        YelpInfo = info;
+    //Method to grab specific business ID found in the yelp search.
+    //This allows you to get only one, instead of populating an entire Array List. Not currently in use on the main activity.
+    public String getBusinessID(int index){
+        return BusinessIDList.get(index);
+    }
+    //Returns the number of Businesses found in Yelp, important for running the for loop in YelpActivity.java
+    public int getNumberOfBusinessIDS(){
+        return BusinessIDList.size();
     }
 
-    /**
-     * Setup the YelpAPI API OAuth credentials.
-     */
+    // Returns the entire list of business ID's in the form of an Array List. Use the method: "getBusinessID" to specify an index and grab one at a time.
+    public ArrayList<String> getBusinessIDList(){
+        return BusinessIDList;
+    }
+
     public YelpAPI() {
 
         this.service = new ServiceBuilder().provider(TwoStepOAuth.class).apiKey(YelpAPI.CONSUMER_KEY).apiSecret(YelpAPI.CONSUMER_SECRET)
@@ -150,6 +167,18 @@ class YelpAPI implements Runnable{
 
         JSONArray businesses = (JSONArray) response.get("businesses");
         JSONObject firstBusiness = (JSONObject) businesses.get(0);
+
+
+        //Populates the business ID Array List with all of the business ID's found in the yelp search.
+        // Important to clear the list first so only the most recent results are displayed.
+        BusinessIDList.clear();
+        for(int i = 0; i < businesses.size(); i++){
+            JSONObject temp = (JSONObject) businesses.get(i);
+            BusinessIDList.add(temp.get("id").toString());
+        }
+
+
+
         String firstBusinessID = firstBusiness.get("id").toString();
         System.out.println(String.format("%s businesses found, querying business info for the top result \"%s\" ...",
                 businesses.size(), firstBusinessID));
@@ -158,14 +187,12 @@ class YelpAPI implements Runnable{
         String businessResponseJSON = yelpApi.searchByBusinessId(firstBusinessID);
         System.out.println(String.format("Result for business \"%s\" found:", firstBusinessID));
         System.out.println(businessResponseJSON);
-        setYelpInfo(firstBusinessID);
+
 
 
     }
 
-    /**
-     * Command-line interface for the sample YelpAPI API runner.
-     */
+
     static class YelpAPICLI {
         @Parameter(names = { "-q", "--term" }, description = "Search Query Term")
         public final String term = DEFAULT_TERM;
