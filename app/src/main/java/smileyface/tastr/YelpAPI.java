@@ -48,7 +48,7 @@ class YelpAPI implements Runnable{
         SEARCH_LIMIT = limit;
     }
     public void setLocation(String newlatitude, String newlongitude){ latitude = newlatitude; longitude = newlongitude;
-        System.err.println("Current location got parsed as: "+ DEFAULT_LOCATION);
+
     }
     public void setTerm(String term){
         DEFAULT_TERM = term;
