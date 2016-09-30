@@ -22,12 +22,15 @@ class YelpAPI implements Runnable{
 
     private static String API_HOST = "api.yelp.com";
     private static String DEFAULT_TERM = "restaurants near me";
-    private static String DEFAULT_LOCATION = "Denton,Texas";
+    private static String DEFAULT_LOCATION = "Houston,Texas";
+    // this CAN NOT be raised over 20. App will crash if it is.
     private static  int SEARCH_LIMIT = 20;
     private static String SEARCH_PATH = "/v2/search";
     private static String BUSINESS_PATH = "/v2/business";
-    private static String latitude = "0";
-    private static String longitude = "0";
+
+    // Default values are null for error checking. If they are still null at the time of calling the Yelp API then the default location will be used in its place. (Much less accurate)
+    private static String latitude = null;
+    private static String longitude = null;
 
     /*
      * Update OAuth credentials below from the YelpAPI Developers API site:
@@ -93,7 +96,13 @@ class YelpAPI implements Runnable{
 
         OAuthRequest request = createOAuthRequest(SEARCH_PATH);
         request.addQuerystringParameter("term", term);
-        request.addQuerystringParameter("ll", latitude + "," + longitude);
+        // checks for non null gps location, if it is null then it will use default location instead. (Can be a zip code "76207" or "City,State")
+        if (latitude == null || longitude == null) {
+            request.addQuerystringParameter("location", location);
+
+        } else {
+            request.addQuerystringParameter("ll", latitude + "," + longitude);
+        }
         request.addQuerystringParameter("limit", String.valueOf(SEARCH_LIMIT));
         return sendRequestAndGetResponse(request);
     }
@@ -199,7 +208,7 @@ class YelpAPI implements Runnable{
         @Parameter(names = { "-q", "--term" }, description = "Search Query Term")
         public final String term = DEFAULT_TERM;
 
-        @Parameter(names = { "-cll", "--location" }, description = "Location to be Queried")
+        @Parameter(names = {"-l", "--location"}, description = "Location to be Queried")
         public final String location = DEFAULT_LOCATION;
     }
 

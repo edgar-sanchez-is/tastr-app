@@ -15,14 +15,12 @@ import java.util.ArrayList;
 import android.Manifest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import android.location.Location;
 
-import static com.google.android.gms.common.GooglePlayServicesUtil.*;
 import static java.lang.String.valueOf;
 
 
