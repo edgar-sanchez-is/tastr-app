@@ -22,8 +22,7 @@
         android:layout_row="4"
         android:layout_column="0"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="19dp" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,9 +31,9 @@
         android:id="@+id/Info_Text"
         android:layout_x="8dp"
         android:layout_y="6dp"
-        android:layout_marginTop="21dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="200dp"
@@ -42,8 +41,17 @@
         android:id="@+id/ID_List_Text"
         android:layout_x="128dp"
         android:layout_y="175dp"
+        android:layout_marginTop="55dp"
         android:layout_below="@+id/Info_Text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp" />
+        android:layout_centerHorizontal="true" />
+
+    <TextClock
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textClock"
+        android:layout_alignBottom="@+id/ID_List_Text"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="15dp" />
 
 </RelativeLayout>

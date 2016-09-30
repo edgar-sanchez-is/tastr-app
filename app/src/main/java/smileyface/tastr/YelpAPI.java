@@ -26,6 +26,8 @@ class YelpAPI implements Runnable{
     private static  int SEARCH_LIMIT = 20;
     private static String SEARCH_PATH = "/v2/search";
     private static String BUSINESS_PATH = "/v2/business";
+    private static String latitude = "0";
+    private static String longitude = "0";
 
     /*
      * Update OAuth credentials below from the YelpAPI Developers API site:
@@ -45,8 +47,8 @@ class YelpAPI implements Runnable{
     public void setSearchLimit(int limit){
         SEARCH_LIMIT = limit;
     }
-    public void setLocation(String location){
-        DEFAULT_LOCATION = location;
+    public void setLocation(String newlatitude, String newlongitude){ latitude = newlatitude; longitude = newlongitude;
+        System.err.println("Current location got parsed as: "+ DEFAULT_LOCATION);
     }
     public void setTerm(String term){
         DEFAULT_TERM = term;
@@ -91,7 +93,7 @@ class YelpAPI implements Runnable{
 
         OAuthRequest request = createOAuthRequest(SEARCH_PATH);
         request.addQuerystringParameter("term", term);
-        request.addQuerystringParameter("location", location);
+        request.addQuerystringParameter("ll", latitude + "," + longitude);
         request.addQuerystringParameter("limit", String.valueOf(SEARCH_LIMIT));
         return sendRequestAndGetResponse(request);
     }
@@ -197,7 +199,7 @@ class YelpAPI implements Runnable{
         @Parameter(names = { "-q", "--term" }, description = "Search Query Term")
         public final String term = DEFAULT_TERM;
 
-        @Parameter(names = { "-l", "--location" }, description = "Location to be Queried")
+        @Parameter(names = { "-cll", "--location" }, description = "Location to be Queried")
         public final String location = DEFAULT_LOCATION;
     }
 
