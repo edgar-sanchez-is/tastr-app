@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_touch"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="smileyface.tastr.TouchActivity">
+
+    <ImageView
+        app:srcCompat="@drawable/cast_ic_stop_circle_filled_grey600"
+        android:id="@+id/imageView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        app:srcCompat="@android:color/holo_green_dark"
+        android:id="@+id/yum"
+        tools:ignore="ContentDescription"
+        android:scaleType="fitXY"
+        android:background="@android:color/holo_green_dark"
+        android:layout_width="250dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/yuck"
+        android:layout_alignStart="@+id/yuck"
+        android:layout_height="80dp" />
+
+    <ImageView
+        app:srcCompat="@android:color/holo_red_dark"
+        android:id="@+id/yuck"
+        tools:ignore="ContentDescription"
+        android:scaleType="fitXY"
+        android:background="@android:color/holo_red_dark"
+        android:layout_width="250dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="80dp" />
+</RelativeLayout>
