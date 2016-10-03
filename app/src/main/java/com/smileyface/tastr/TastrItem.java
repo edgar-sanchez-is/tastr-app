@@ -1,4 +1,4 @@
-package smileyface.tastr;
+package com.smileyface.tastr;
 
 /**
  *class: public class TastrItem

@@ -9,7 +9,6 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="smileyface.tastr.YelpActivity">
 
     <Button
         android:text="Try Yelp"
@@ -44,14 +43,5 @@
         android:layout_marginTop="55dp"
         android:layout_below="@+id/Info_Text"
         android:layout_centerHorizontal="true" />
-
-    <TextClock
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textClock"
-        android:layout_alignBottom="@+id/ID_List_Text"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="15dp" />
 
 </RelativeLayout>

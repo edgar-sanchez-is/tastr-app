@@ -1,4 +1,4 @@
-package smileyface.tastr;
+package com.smileyface.tastr;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

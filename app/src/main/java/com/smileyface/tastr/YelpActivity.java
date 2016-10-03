@@ -1,8 +1,7 @@
-package smileyface.tastr;
+package com.smileyface.tastr;
 
 
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
@@ -23,8 +22,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 
 import android.location.Location;
@@ -58,7 +55,7 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_yelp);
+        setContentView(com.smileyface.tastr.R.layout.activity_test_yelp);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_COARSE_LOCATION);
@@ -218,17 +215,17 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
 
     //Status text for what the system is currently doing. (Such as grabbing data from the Yelp API)
     private void changeYelpResults( String text){
-        TextView t = (TextView) findViewById(R.id.Info_Text);
+        TextView t = (TextView) findViewById(com.smileyface.tastr.R.id.Info_Text);
         t.setText(text);
     }
     // Text Field that will fill with Business ID's as Async Task Loader fetches them from yelp. (see post execute for loop below)
     private void listBusinesses(String text){
-        TextView t = (TextView) findViewById(R.id.ID_List_Text);
+        TextView t = (TextView) findViewById(com.smileyface.tastr.R.id.ID_List_Text);
         t.append(text);
     }
 
     private void clearBusinessResults(){
-        TextView t = (TextView) findViewById(R.id.ID_List_Text);
+        TextView t = (TextView) findViewById(com.smileyface.tastr.R.id.ID_List_Text);
         t.setText("");
     }
 
