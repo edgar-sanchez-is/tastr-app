@@ -1,4 +1,4 @@
-package smileyface.tastr;
+package com.smileyface.tastr;
 
 import android.app.Activity;
 import android.content.ClipData;
@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import smileyface.tastr.R;
 
 
 public class TouchActivity extends Activity {
