@@ -2,27 +2,16 @@ package smileyface.tastr;
 
 import android.app.Activity;
 import android.content.ClipData;
-import android.content.ClipDescription;
 import android.content.DialogInterface;
-import android.graphics.Rect;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.text.method.Touch;
 import android.util.Log;
 import android.view.DragEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-import static smileyface.tastr.R.id.text;
 
 
 public class TouchActivity extends Activity {
@@ -249,7 +238,7 @@ public class TouchActivity extends Activity {
                         img.startDrag(data, shadowBuilder, img, 100);
                     }
 
-                    img.setVisibility(View.INVISIBLE);
+
                     return true;
                 } else {
                     return false;
