@@ -13,8 +13,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import smileyface.tastr.R;
-
 
 public class TouchActivity extends Activity {
     ImageView img;

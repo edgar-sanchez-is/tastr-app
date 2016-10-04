@@ -1,6 +1,8 @@
-package smileyface.tastr;
+package com.smileyface.tastr;
 
+import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
@@ -11,15 +13,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.ArrayList;
-import android.Manifest;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import android.location.Location;
+
+import java.util.ArrayList;
 
 import static java.lang.String.valueOf;
 
