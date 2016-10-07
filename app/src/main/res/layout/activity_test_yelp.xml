@@ -16,11 +16,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/YelpTestButton"
-        android:onClick="yelpClick (YelpActivity)"
         android:layout_y="498dp"
         android:layout_row="4"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="yelpClick" />
 
     <TextView
         android:layout_width="wrap_content"

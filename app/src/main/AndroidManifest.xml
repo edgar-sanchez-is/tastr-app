@@ -31,7 +31,7 @@
         <activity android:name=".YelpActivity" />
         <activity android:name=".TouchActivity" />
         <activity
-            android:name="com.smileyface.com.smileyface.tastr.SettingsActivity"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
             <meta-data
