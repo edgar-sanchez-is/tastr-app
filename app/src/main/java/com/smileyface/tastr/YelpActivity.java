@@ -110,7 +110,7 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     // One of two places that Longitude and Latitude might be set, somehwat redundant but if you lose GPS location and had it earlier when the app was running this
-    // will allow restaurants to populate based on your last known location instead of the default location in YelpAPI.java
+    // will allow restaurants to populate based on your last known location instead of the default location in YelpAPI.Launcher
     private Location bestLastKnownLocation(float minAccuracy, long minTime) {
         System.err.println("GOT TO METHOD: BEST LAST KNOWN LOCATION");
         Location bestResult = null;

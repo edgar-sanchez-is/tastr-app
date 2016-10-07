@@ -62,7 +62,8 @@ class YelpAPI implements Runnable{
     public String getBusinessID(int index){
         return BusinessIDList.get(index);
     }
-    //Returns the number of Businesses found in Yelp, important for running the for loop in YelpActivity.java
+
+    //Returns the number of Businesses found in Yelp, important for running the for loop in YelpActivity.Launcher
     public int getNumberOfBusinessIDS(){
         return BusinessIDList.size();
     }
