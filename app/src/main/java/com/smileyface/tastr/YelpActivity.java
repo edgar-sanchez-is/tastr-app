@@ -240,11 +240,7 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
             businessIDs.clear();
             businessIDs = API.getBusinessIDList();
 
-
-
             return null;
-
-
         }
 
         // Everything you want to happen AFTER the doInBackground function is executed. Use this method to make changes to the GUI. IE listing all of the businesses found.
@@ -254,7 +250,6 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
             //error checking
             if (numberOfBusinesses <= 0) {
                 changeYelpResults("No Businesses Found, is GPS enabled?");
-
             }
             // if yelp finds any businesses then do stuff
             else {
@@ -274,18 +269,5 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
                 changeYelpResults("Found " + numberOfBusinesses + " Businesses! Results listed below.");
             }
         }
-
-
     }
 }
-
-
-
-
-
-
-
-
-
-
-

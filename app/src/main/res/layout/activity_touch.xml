@@ -12,11 +12,11 @@
     tools:context="com.smileyface.tastr.TouchActivity">
 
     <ImageView
-        app:srcCompat="@drawable/cast_ic_stop_circle_filled_grey600"
+        app:srcCompat="@android:color/holo_purple"
         android:id="@+id/imageView"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
+        android:background="@android:color/holo_purple"
         android:layout_width="75dp"
         android:layout_height="75dp"
         tools:ignore="ContentDescription"
