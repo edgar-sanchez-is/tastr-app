@@ -3,6 +3,7 @@ package com.smileyface.tastr;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -13,16 +14,28 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 
 public class TouchActivity extends Activity {
+    String msg;
     ImageView img;
     ImageView yum;
     ImageView yuck;
-    String msg;
-    private android.widget.RelativeLayout.LayoutParams layoutParams;
+    private RelativeLayout.LayoutParams layoutParams;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_touch);
         img = (ImageView) findViewById(R.id.imageView);
@@ -74,8 +87,7 @@ public class TouchActivity extends Activity {
                     case DragEvent.ACTION_DROP:
                         Log.d(msg, "ACTION_DROP event");
 
-                        img.setX(event.getX());
-                        img.setY(event.getY());
+
                         return true;
 
                     default:
@@ -116,8 +128,6 @@ public class TouchActivity extends Activity {
 
                     case DragEvent.ACTION_DRAG_LOCATION:
                         Log.d(msg, "Action is DragEvent.ACTION_DRAG_LOCATION");
-                        x_cord = (int) event.getX();
-                        y_cord = (int) event.getY();
                         break;
 
                     case DragEvent.ACTION_DROP:
@@ -142,6 +152,7 @@ public class TouchActivity extends Activity {
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .show();
+                                onCreate(null);
 
 
                         break;
@@ -196,6 +207,7 @@ public class TouchActivity extends Activity {
                             v.setVisibility(View.VISIBLE);
                         }
 
+
                         new AlertDialog.Builder(TouchActivity.this)
                                 .setTitle("Collision Detected")
                                 .setMessage("Yuck!")
@@ -211,7 +223,7 @@ public class TouchActivity extends Activity {
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .show();
-
+                                onCreate(null);
 
                         break;
 
@@ -227,7 +239,8 @@ public class TouchActivity extends Activity {
 
         img.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+
+                public boolean onTouch (View v, MotionEvent event){
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(img);
@@ -244,7 +257,11 @@ public class TouchActivity extends Activity {
                     return false;
                 }
             }
+
         });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private boolean dropEventNotHandled(DragEvent dragEvent) {
@@ -252,4 +269,39 @@ public class TouchActivity extends Activity {
     }
 
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Touch Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
 }
