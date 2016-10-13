@@ -1,5 +1,8 @@
 package com.smileyface.tastr;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 /**
  * class: public class TastrItem
  * Created by Josh on 9/25/2016.
@@ -40,6 +43,7 @@ public class TastrItem {
         imagePath = mImagePath;
         imageID = mImageID;
     }
+
     //potential CSV style construtor and CSV style saving.
   /*
   public TastrItem(const String tastrItemCSV)
