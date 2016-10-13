@@ -11,7 +11,7 @@
     tools:context="com.smileyface.tastr.MainActivity">
 
     <Button
-        android:text="Launch Touch View"
+        android:text="@string/launch_touch_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/touchViewButton"
@@ -23,34 +23,13 @@
         android:layout_alignParentEnd="true" />
 
     <Button
-        android:text="Launch Yelp View"
+        android:text="@string/launch_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/touchViewButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/yelpViewButton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        tools:text="Launch Yelp View" />
-
-    <Button
-        android:text="Launch Settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/yelpViewButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:id="@+id/settingsViewButton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        tools:text="Launch Settings" />
+        tools:text="Launch Settings"
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/touchViewButton"
+        android:layout_centerHorizontal="true" />
 
-    <Button
-        android:text="Test Database"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/database" />
 </RelativeLayout>

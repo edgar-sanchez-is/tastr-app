@@ -91,14 +91,14 @@ public class TastrItem {
 
     //constructors
     public TastrItem() {
-        tastrID = "";
-        name = "";
-        description = "";
-        restaurant = "";
-        yelpRestaurantID = "";
-        rating = "";
-        imagePath = "";
-        imageID = "";
+        tastrID = "Unknown";
+        name = "Unknown";
+        description = "Unknown";
+        restaurant = "Unknown";
+        yelpRestaurantID = "Unknown";
+        rating = "Unknown";
+        imagePath = "Unknown";
+        imageID = "Unknown";
     }
 
     //convenience constructor

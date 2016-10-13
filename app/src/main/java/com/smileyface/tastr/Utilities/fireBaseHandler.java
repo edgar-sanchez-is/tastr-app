@@ -25,6 +25,8 @@ public class firebaseHandler {
     private String state ="Unknown";
     private String city ="Unknown";
     private String YelpID= "Unknown";
+    private boolean foundID = false;
+    private String search = "";
 
     // Getters and Setters for vars
 
@@ -68,19 +70,61 @@ public class firebaseHandler {
 
 
     // Method Specifically for writing a new TastrItem to the database.
+
     public void writeTastrToDatabase(TastrItem newItem){
         // Define new parameters, this prevents errors when trying to write data to a state/city/ID we haven't added a restaurant to yet.
-        reference.setValue(getState());
-        reference.child(getState()).setValue(getCity());
-        reference.child(getState()).child(getCity()).setValue(getYelpID());
+        //reference.setValue(getState());
+        //reference.child(getState()).setValue(getCity());
+        //eference.child(getState()).child(getCity()).child(getYelpID());
+
+        Map<String, Object> ID = new HashMap<String, Object>();
+        ID.put("",YelpID);
+        reference.child(getState()).child(getCity()).updateChildren(ID);
 
         // Pick correct place in the database to save new data.
         DatabaseReference tempReference = reference.child(getState()).child(getCity()).child(getYelpID());
+
         // Write new data to the database
         tempReference.updateChildren(newItem.getMap(newItem));
 
     }
 
+    public void writeNewYelpID(){
+
+    }
+
+
+    ValueEventListener postListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+
+            if (dataSnapshot.hasChild(getSearch())){
+                setFoundID(true);
+            }else{setFoundID(false);}
+        }
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // Getting Post failed, log a message
+        }
+    };
+
+    private String getSearch() {
+        return search;
+    }
+    public void setSearch(String input){
+        search = input;
+
+    }
+
+    public boolean searchForYelpID(String newSearch){
+        setSearch(newSearch);
+        reference.child(getState()).child(getCity()).addListenerForSingleValueEvent(postListener);
+        return foundID;
+    }
+
+    public void setFoundID(boolean input){
+        foundID = input;
+    }
     public void readFromDatabase(){
 
         // Read from the database

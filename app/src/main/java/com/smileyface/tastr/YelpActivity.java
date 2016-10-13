@@ -27,16 +27,18 @@ import static java.lang.String.valueOf;
 
 
 public class YelpActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener  {
-    String currentLat = null;
-    String currentLong = null;
+    //Permission Variables
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
-
 
     //Variables for requesting locations from Google.
     private static final long POLL_FREQ = 1;
     private static final long FASTEST_UPDATE_FREQ = 100 * 5;
     private LocationRequest mLocationRequest;
     private GoogleApiClient googleApiClient;
+
+    // Location Variables
+    String currentLat = null;
+    String currentLong = null;
 
 
     // Immediately on start of the application. This method will be removed when we get a new activity.
