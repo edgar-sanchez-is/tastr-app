@@ -1,5 +1,6 @@
 package com.smileyface.tastr.Utilities;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -72,12 +73,15 @@ public class firebaseHandler {
     // Method Specifically for writing a new TastrItem to the database.
 
     public void writeTastrToDatabase(TastrItem newItem){
+
+
         // Define new parameters, this prevents errors when trying to write data to a state/city/ID we haven't added a restaurant to yet.
         //reference.setValue(getState());
         //reference.child(getState()).setValue(getCity());
-        //eference.child(getState()).child(getCity()).child(getYelpID());
+        //reference.child(getState()).child(getCity()).child(getYelpID());
 
-        Map<String, Object> ID = new HashMap<String, Object>();
+
+        final Map<String, Object> ID = new HashMap<String, Object>();
         ID.put("",YelpID);
         reference.child(getState()).child(getCity()).updateChildren(ID);
 
@@ -94,19 +98,7 @@ public class firebaseHandler {
     }
 
 
-    ValueEventListener postListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
 
-            if (dataSnapshot.hasChild(getSearch())){
-                setFoundID(true);
-            }else{setFoundID(false);}
-        }
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            // Getting Post failed, log a message
-        }
-    };
 
     private String getSearch() {
         return search;
@@ -117,6 +109,20 @@ public class firebaseHandler {
     }
 
     public boolean searchForYelpID(String newSearch){
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.hasChild(getSearch())){
+                    setFoundID(true);
+                }else{setFoundID(false);}
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+            }
+        };
+
         setSearch(newSearch);
         reference.child(getState()).child(getCity()).addListenerForSingleValueEvent(postListener);
         return foundID;

@@ -227,6 +227,9 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
 
         // Everything you want to happen OUTSIDE of the GUI thread.
         protected String doInBackground(String... params) {
+            while(currentLat == null){
+
+            }
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             if(currentLat != null && currentLong !=null) {
                 API.setLocation(currentLat,currentLong);

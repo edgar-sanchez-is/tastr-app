@@ -22,6 +22,9 @@ public class TastrItem {
     public static String rating;
     public String imagePath;
     public static String imageID;
+    public static String address;
+    public static String phone;
+    public static String categories;
 
     // Getters and Setters for parameters
     public static String getTastrID() {
@@ -72,6 +75,18 @@ public class TastrItem {
         TastrItem.rating = rating;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getCategories() {
+        return categories;
+    }
+
     public String getImagePath() {
         return imagePath;
     }
@@ -99,6 +114,9 @@ public class TastrItem {
         rating = "Unknown";
         imagePath = "Unknown";
         imageID = "Unknown";
+        categories = "Unknown";
+        phone = "unknown";
+        address = "unknown";
     }
 
     //convenience constructor
@@ -118,16 +136,30 @@ public class TastrItem {
 
         Map<String, Object> tastrMap = new HashMap<String, Object>();
 
-        tastrMap.put("1- Restraunt", newItem.getRestaurant());
-        tastrMap.put("2- Tastr ID", newItem.getTastrID());
-        tastrMap.put("3- Menu Item", newItem.getName());
-        tastrMap.put("4- Description", newItem.getDescription());
-        tastrMap.put("5- Rating", newItem.getRating());
-        tastrMap.put("6- Image ID", newItem.getImageID());
-        tastrMap.put("7- Image Path", newItem.getImagePath());
+        tastrMap.put("01- Restraunt", newItem.getRestaurant());
+        tastrMap.put("02- Tastr ID", newItem.getTastrID());
+        tastrMap.put("03- Menu Item", newItem.getName());
+        tastrMap.put("04- Description", newItem.getDescription());
+        tastrMap.put("05- Rating", newItem.getRating());
+        tastrMap.put("06- Categories", newItem.getCategories());
+        tastrMap.put("07- Address", newItem.getAddress());
+        tastrMap.put("08- Phone", newItem.getPhone());
+        tastrMap.put("09- Image ID", newItem.getImageID());
+        tastrMap.put("10- Image Path", newItem.getImagePath());
 
 
         return tastrMap;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setCategories(String categories) {
+        this.categories = categories;
+    }
 }

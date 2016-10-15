@@ -1,17 +1,14 @@
 package com.smileyface.tastr;
 
-import android.*;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -30,8 +27,6 @@ import com.smileyface.tastr.Utilities.firebaseHandler;
 import java.util.ArrayList;
 
 import static java.lang.String.valueOf;
-import static java.lang.System.exit;
-
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener {
 
     //Permission Variables
@@ -221,14 +216,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     // Async task for contacting the Yelp API. Important to preform the operation off the main thread, or the app will crash and give internet connection on main thread exception.
     private class yelpLoader extends AsyncTask<String, Void, String> {
 
+
         int numberOfBusinesses = 0;
         YelpAPI API = new YelpAPI();
         ArrayList<String> businessIDs = new ArrayList<>();// important to use an Arraylist for the buisness ID values so its easier to iterate through them and retrieve them based on index in order of closest to furthest. (Or in whatever way we choose to sort them)
+        ArrayList<String> ratings = new ArrayList<String>();
+        ArrayList<String> cities = new ArrayList<String>();
+        ArrayList<String> states = new ArrayList<String>();
+        ArrayList<String> addresses = new ArrayList<String>();
+        ArrayList<String> categories = new ArrayList<String>();
+        ArrayList<String> phones = new ArrayList<String>();
+        ArrayList<String> restaurants = new ArrayList<String>();
+
 
         // Everything you want to happen OUTSIDE of the GUI thread.
             protected String doInBackground(String... params) {
 
 
+                // While loop will prevent API calls until gps location is found. We should eventually implement zip searching as an alternative.
+                while(currentLat == null){
+
+                }
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             if(currentLat != null && currentLong !=null) {
                 API.setLocation(currentLat,currentLong);
@@ -245,25 +253,45 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             // Also clears the previous results if this is the second time hitting the button.
             businessIDs.clear();
             businessIDs = API.getBusinessIDList();
+                ratings = API.getRatingList();
+                cities = API.getCityList();
+                states = API.getStateList();
+                addresses = API.getAddressList();
+                categories = API.getCategoryList();
+                phones = API.getPhoneList();
+                restaurants = API.getNameList();
 
 
                 for (int i = 0; i < numberOfBusinesses; i++) {
                     firebaseHandler firebase = new firebaseHandler("Tastr Items");
                     if(firebase.searchForYelpID(businessIDs.get(i))){
-                        System.out.println("Found the IDs!");
-                        System.out.println("Found the IDs!");
-                        System.out.println("Found the IDs!");
-                        System.out.println("Found the IDs!");
-                        System.out.println("Found the IDs!");
-                        System.out.println("Found the IDs!");
-                        System.out.println("Found the IDs!");
-                        System.out.println("Found the IDs!");
+
                     }
                     else{
+                       // Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
+                       // double lat = Double.parseDouble(currentLat);
+                       // double longi = Double.parseDouble(currentLong);
+                        //List<Address> addresses = null;
+                       // try {
+                            //addresses = gcd.getFromLocation(lat,longi,1);
+                       // } catch (IOException e) {
+                        //    e.printStackTrace();
+                        //}
+                        //if(addresses.size()>0){
+                           // firebase.setCity(addresses.get(0).getLocality());
+                            //firebase.setState(addresses.get(0).getAdminArea());
+                        //}
                         TastrItem newItem = new TastrItem();
-                        firebase.setCity("Denton");
-                        firebase.setState("Texas");
+                        //firebase.setCity("Anchorage");
+                        //firebase.setState("Alaska");
                         firebase.setYelpID(businessIDs.get(i));
+                        newItem.setRating(ratings.get(i));
+                        firebase.setCity(cities.get(i));
+                        firebase.setState(states.get(i));
+                        newItem.setRestaurant(restaurants.get(i));
+                        newItem.setCategories(categories.get(i));
+                        newItem.setPhone(phones.get(i));
+                        newItem.setAddress(addresses.get(i));
                         firebase.writeTastrToDatabase(newItem);
                     }
                 }//for

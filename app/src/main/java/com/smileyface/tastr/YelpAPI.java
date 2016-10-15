@@ -44,7 +44,73 @@ class YelpAPI implements Runnable{
     private OAuthService service;
     private Token accessToken;
 
+    // Array lists for sorting the data and making it easily accessible.
     static ArrayList<String> BusinessIDList = new ArrayList<String>();
+    static ArrayList<String> RatingList = new ArrayList<String>();
+    static ArrayList<String> cityList = new ArrayList<String>();
+    static ArrayList<String> stateList = new ArrayList<String>();
+    static ArrayList<String> addressList = new ArrayList<String>();
+    static ArrayList<String> categoryList = new ArrayList<String>();
+    static ArrayList<String> phoneList = new ArrayList<String>();
+    static ArrayList<String> nameList = new ArrayList<String>();
+
+    //getters and setters for each array list.
+    public static ArrayList<String> getPhoneList() {
+        return phoneList;
+    }
+
+    public static void setPhoneList(ArrayList<String> phoneList) {
+        YelpAPI.phoneList = phoneList;
+    }
+
+    public static ArrayList<String> getRatingList() {
+        return RatingList;
+    }
+
+    public static void setRatingList(ArrayList<String> ratingList) {
+        RatingList = ratingList;
+    }
+
+    public static ArrayList<String> getCityList() {
+        return cityList;
+    }
+
+    public static void setCityList(ArrayList<String> cityList) {
+        YelpAPI.cityList = cityList;
+    }
+
+    public static ArrayList<String> getStateList() {
+        return stateList;
+    }
+
+    public static void setStateList(ArrayList<String> stateList) {
+        YelpAPI.stateList = stateList;
+    }
+
+    public static ArrayList<String> getAddressList() {
+        return addressList;
+    }
+
+    public static void setAddressList(ArrayList<String> addressList) {
+        YelpAPI.addressList = addressList;
+    }
+
+    public static ArrayList<String> getCategoryList() {
+        return categoryList;
+    }
+
+    public static void setCategoryList(ArrayList<String> categoryList) {
+        YelpAPI.categoryList = categoryList;
+    }
+
+    public static ArrayList<String> getNameList() {
+        return nameList;
+    }
+
+    public static void setNameList(ArrayList<String> nameList) {
+        YelpAPI.nameList = nameList;
+    }
+    // end getters and setters
 
     // Methods for setting default search parameters, fairly self explanatory. Be sure to change these before calling API.run if you want to change the default variables.
     public void setSearchLimit(int limit){
@@ -178,6 +244,7 @@ class YelpAPI implements Runnable{
         }
 
         JSONArray businesses = (JSONArray) response.get("businesses");
+
         JSONObject firstBusiness = (JSONObject) businesses.get(0);
 
 
@@ -186,7 +253,16 @@ class YelpAPI implements Runnable{
         BusinessIDList.clear();
         for(int i = 0; i < businesses.size(); i++){
             JSONObject temp = (JSONObject) businesses.get(i);
+            JSONObject temp1 = (JSONObject) temp.get("location");
             BusinessIDList.add(temp.get("id").toString());
+            RatingList.add(temp.get("rating").toString());
+            cityList.add(temp1.get("city").toString());
+            stateList.add(temp1.get("state_code").toString());
+            phoneList.add(temp.get("phone").toString());
+            categoryList.add(temp.get("categories").toString());
+            addressList.add(temp1.get("address").toString().replaceAll("\\\\", ""));
+            nameList.add(temp.get("name").toString());
+
         }
 
 
