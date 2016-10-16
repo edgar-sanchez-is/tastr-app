@@ -1,4 +1,5 @@
 package com.smileyface.tastr;
+
 import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.Token;
 

@@ -21,10 +21,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 
 public class TouchActivity extends Activity {
-    String msg;
-    ImageView img;
-    ImageView yum;
-    ImageView yuck;
+    private String msg;
+    private ImageView img;
     private RelativeLayout.LayoutParams layoutParams;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -39,8 +37,8 @@ public class TouchActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_touch);
         img = (ImageView) findViewById(R.id.imageView);
-        yum = (ImageView) findViewById(R.id.yum);
-        yuck = (ImageView) findViewById(R.id.yuck);
+        ImageView yum = (ImageView) findViewById(R.id.yum);
+        ImageView yuck = (ImageView) findViewById(R.id.yuck);
 
         img.setOnDragListener(new View.OnDragListener() {
             @Override
@@ -73,8 +71,6 @@ public class TouchActivity extends Activity {
 
                     case DragEvent.ACTION_DRAG_LOCATION:
                         Log.d(msg, "Action is DragEvent.ACTION_DRAG_LOCATION");
-                        x_cord = (int) event.getX();
-                        y_cord = (int) event.getY();
                         v.setVisibility(View.VISIBLE);
                         return true;
 
@@ -152,7 +148,7 @@ public class TouchActivity extends Activity {
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .show();
-                                onCreate(null);
+                        onCreate(null);
 
 
                         break;
@@ -196,8 +192,6 @@ public class TouchActivity extends Activity {
 
                     case DragEvent.ACTION_DRAG_LOCATION:
                         Log.d(msg, "Action is DragEvent.ACTION_DRAG_LOCATION");
-                        x_cord = (int) event.getX();
-                        y_cord = (int) event.getY();
                         break;
 
                     case DragEvent.ACTION_DROP:
@@ -223,7 +217,7 @@ public class TouchActivity extends Activity {
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .show();
-                                onCreate(null);
+                        onCreate(null);
 
                         break;
 
@@ -240,16 +234,15 @@ public class TouchActivity extends Activity {
         img.setOnTouchListener(new View.OnTouchListener() {
             @Override
 
-                public boolean onTouch (View v, MotionEvent event){
+            public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(img);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         img.startDragAndDrop(data, shadowBuilder, img, 100);
-                    } else {
+                    } else //noinspection deprecation,deprecation,deprecation
                         img.startDrag(data, shadowBuilder, img, 100);
-                    }
 
 
                     return true;
@@ -273,7 +266,7 @@ public class TouchActivity extends Activity {
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    public Action getIndexApiAction() {
+    private Action getIndexApiAction() {
         Thing object = new Thing.Builder()
                 .setName("Touch Page") // TODO: Define a title for the content shown.
                 // TODO: Make sure this auto-generated URL is correct.

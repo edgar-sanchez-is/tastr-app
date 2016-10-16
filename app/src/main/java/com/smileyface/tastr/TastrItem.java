@@ -1,8 +1,5 @@
 package com.smileyface.tastr;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,20 +11,20 @@ import java.util.Map;
  **/
 public class TastrItem {
     //parameters
-    public static String tastrID;
-    public static String name;
-    public static String description;
-    public static String restaurant;
-    public static String yelpRestaurantID;
-    public static String rating;
-    public String imagePath;
-    public static String imageID;
-    public static String address;
-    public static String phone;
-    public static String categories;
+    private static String tastrID;
+    private static String name;
+    private static String description;
+    private static String restaurant;
+    private static String yelpRestaurantID;
+    private static String rating;
+    private static String imagePath;
+    private static String imageID;
+    private static String address;
+    private static String phone;
+    private static String categories;
 
     // Getters and Setters for parameters
-    public static String getTastrID() {
+    private static String getTastrID() {
         return tastrID;
     }
 
@@ -35,7 +32,7 @@ public class TastrItem {
         TastrItem.tastrID = tastrID;
     }
 
-    public static String getName() {
+    private static String getName() {
         return name;
     }
 
@@ -43,7 +40,7 @@ public class TastrItem {
         TastrItem.name = name;
     }
 
-    public static String getDescription() {
+    private static String getDescription() {
         return description;
     }
 
@@ -51,7 +48,7 @@ public class TastrItem {
         TastrItem.description = description;
     }
 
-    public static String getRestaurant() {
+    private static String getRestaurant() {
         return restaurant;
     }
 
@@ -67,7 +64,7 @@ public class TastrItem {
         TastrItem.yelpRestaurantID = yelpRestaurantID;
     }
 
-    public static String getRating() {
+    private static String getRating() {
         return rating;
     }
 
@@ -75,27 +72,27 @@ public class TastrItem {
         TastrItem.rating = rating;
     }
 
-    public String getPhone() {
+    private String getPhone() {
         return phone;
     }
 
-    public String getAddress() {
+    private String getAddress() {
         return address;
     }
 
-    public String getCategories() {
+    private String getCategories() {
         return categories;
     }
 
-    public String getImagePath() {
+    private String getImagePath() {
         return imagePath;
     }
 
     public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+        TastrItem.imagePath = imagePath;
     }
 
-    public static String getImageID() {
+    private static String getImageID() {
         return imageID;
     }
 
@@ -120,46 +117,46 @@ public class TastrItem {
     }
 
     //convenience constructor
-    public TastrItem(String mTastrID, String mName, String mDescription, String mRestraunt, String mYelpID, String mRating, String mImagePath, String mImageID) {
+    public TastrItem(String mTastrID, String mName, String mDescription, String mRestaurant, String mYelpID, String mRating, String mImagePath, String mImageID) {
         tastrID = mTastrID;
         name = mName;
         description = mDescription;
-        restaurant = mRestraunt;
+        restaurant = mRestaurant;
         yelpRestaurantID = mYelpID;
         rating = mRating;
         imagePath = mImagePath;
         imageID = mImageID;
     }
 
-    //converts Tastr Item into a hasmap for database storage
-    public Map<String, Object> getMap(TastrItem newItem){
+    //converts Tastr Item into a hash-map for database storage
+    public Map<String, Object> getMap(TastrItem newItem) {
 
-        Map<String, Object> tastrMap = new HashMap<String, Object>();
+        Map<String, Object> tastrMap = new HashMap<>();
 
-        tastrMap.put("01- Restraunt", newItem.getRestaurant());
-        tastrMap.put("02- Tastr ID", newItem.getTastrID());
-        tastrMap.put("03- Menu Item", newItem.getName());
-        tastrMap.put("04- Description", newItem.getDescription());
-        tastrMap.put("05- Rating", newItem.getRating());
+        tastrMap.put("01- Restaurant", getRestaurant());
+        tastrMap.put("02- Tastr ID", getTastrID());
+        tastrMap.put("03- Menu Item", getName());
+        tastrMap.put("04- Description", getDescription());
+        tastrMap.put("05- Rating", getRating());
         tastrMap.put("06- Categories", newItem.getCategories());
         tastrMap.put("07- Address", newItem.getAddress());
         tastrMap.put("08- Phone", newItem.getPhone());
-        tastrMap.put("09- Image ID", newItem.getImageID());
+        tastrMap.put("09- Image ID", getImageID());
         tastrMap.put("10- Image Path", newItem.getImagePath());
 
 
         return tastrMap;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    void setAddress(String address) {
+        TastrItem.address = address;
     }
 
     public void setPhone(String phone) {
-        this.phone = phone;
+        TastrItem.phone = phone;
     }
 
     public void setCategories(String categories) {
-        this.categories = categories;
+        TastrItem.categories = categories;
     }
 }

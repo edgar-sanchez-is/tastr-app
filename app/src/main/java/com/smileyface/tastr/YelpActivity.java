@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import static java.lang.String.valueOf;
 
 
-public class YelpActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener  {
+public class YelpActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     //Permission Variables
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
 
@@ -74,12 +75,12 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
                 System.err.println("Google Play Services Unavailable");
             }
         }
-            }
+    }
 
 
     // This is an example of what we can do if the user declines location services.
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_ACCESS_COARSE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -94,7 +95,7 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
 
     //If we can't get GPS location from google this is where we should prompt the user for a zip code or something instead of using GPS to find restaurants.
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.i(YelpActivity.class.getSimpleName(), "Can't connect to Google Play Services!");
         System.err.println("CONNECTION TO GOOGLE FAILED");
     }
@@ -108,10 +109,10 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_COARSE_LOCATION);
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest,this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest, this);
     }
 
-    // One of two places that Longitude and Latitude might be set, somehwat redundant but if you lose GPS location and had it earlier when the app was running this
+    // One of two places that Longitude and Latitude might be set, somewhat redundant but if you lose GPS location and had it earlier when the app was running this
     // will allow restaurants to populate based on your last known location instead of the default location in YelpAPI.Launcher
     private Location bestLastKnownLocation(float minAccuracy, long minTime) {
         System.err.println("GOT TO METHOD: BEST LAST KNOWN LOCATION");
@@ -155,8 +156,7 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
         // Return best reading or null
         if (bestAccuracy > minAccuracy || bestTime < minTime) {
             return null;
-        }
-        else {
+        } else {
             return bestResult;
         }
     }
@@ -165,12 +165,8 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
     private boolean servicesAvailable() {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         int result = googleAPI.isGooglePlayServicesAvailable(this);
-        if (result != ConnectionResult.SUCCESS) {
+        return result == ConnectionResult.SUCCESS;
 
-            return false;
-        }
-
-        return true;
     }
 
     // If the connection from google stops coming in do stuff.
@@ -195,25 +191,26 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     //Action Listener for clicking the yelp button
-    public void yelpClick(View v){
+    public void yelpClick(View v) {
         changeYelpResults("Grabbing Data From Yelp");
         yelpLoader load = new yelpLoader();
         load.execute();
     }
 
     //Status text for what the system is currently doing. (Such as grabbing data from the Yelp API)
-    private void changeYelpResults( String text){
+    private void changeYelpResults(String text) {
         TextView t = (TextView) findViewById(R.id.Info_Text);
         t.setText(text);
     }
+
     // Text Field that will fill with Business ID's as Async Task Loader fetches them from yelp. (see post execute for loop below)
-    private void listBusinesses(String text){
+    private void listBusinesses(String text) {
         TextView t = (TextView) findViewById(R.id.ID_List_Text);
         t.append(text);
     }
 
     // Clears the list so when the Yelp API is contacted again the new list will repopulate with only the most recent values.
-    private void clearBusinessResults(){
+    private void clearBusinessResults() {
         TextView t = (TextView) findViewById(R.id.ID_List_Text);
         t.setText("");
     }
@@ -222,17 +219,17 @@ public class YelpActivity extends AppCompatActivity implements GoogleApiClient.C
     // Async task for contacting the Yelp API. Important to preform the operation off the main thread, or the app will crash and give internet connection on main thread exception.
     private class yelpLoader extends AsyncTask<String, Void, String> {
         YelpAPI API = new YelpAPI();
-        ArrayList<String> businessIDs = new ArrayList<>();// important to use an Arraylist for the buisness ID values so its easier to iterate through them and retrieve them based on index in order of closest to furthest. (Or in whatever way we choose to sort them)
+        ArrayList<String> businessIDs = new ArrayList<>();// important to use an Arraylist for the business ID values so its easier to iterate through them and retrieve them based on index in order of closest to furthest. (Or in whatever way we choose to sort them)
         int numberOfBusinesses = 0;
 
         // Everything you want to happen OUTSIDE of the GUI thread.
         protected String doInBackground(String... params) {
-            while(currentLat == null){
+            while (currentLat == null) {
 
             }
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            if(currentLat != null && currentLong !=null) {
-                API.setLocation(currentLat,currentLong);
+            if (currentLat != null && currentLong != null) {
+                API.setLocation(currentLat, currentLong);
             }
             // Starts the API, which will automatically contact yelp and populate the business information.
             API.run();

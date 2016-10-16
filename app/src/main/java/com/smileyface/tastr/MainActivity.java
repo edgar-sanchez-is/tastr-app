@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +28,8 @@ import com.smileyface.tastr.Utilities.firebaseHandler;
 import java.util.ArrayList;
 
 import static java.lang.String.valueOf;
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener {
+
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     //Permission Variables
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
@@ -39,8 +41,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private GoogleApiClient googleApiClient;
 
     // Location Variables
-    String currentLat = null;
-    String currentLong = null;
+    private String currentLat = null;
+    private String currentLong = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     // This is an example of what we can do if the user declines location services.
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_ACCESS_COARSE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     //If we can't get GPS location from google this is where we should prompt the user for a zip code or something instead of using GPS to find restaurants.
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.i(YelpActivity.class.getSimpleName(), "Can't connect to Google Play Services!");
         System.err.println("CONNECTION TO GOOGLE FAILED");
     }
@@ -126,69 +128,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_COARSE_LOCATION);
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest,this);
-    }
-
-    // One of two places that Longitude and Latitude might be set, somehwat redundant but if you lose GPS location and had it earlier when the app was running this
-    // will allow restaurants to populate based on your last known location instead of the default location in YelpAPI.Launcher
-    private Location bestLastKnownLocation(float minAccuracy, long minTime) {
-        System.err.println("GOT TO METHOD: BEST LAST KNOWN LOCATION");
-        Location bestResult = null;
-        float bestAccuracy = Float.MAX_VALUE;
-        long bestTime = Long.MIN_VALUE;
-
-        // Get the best most recent location currently available
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_COARSE_LOCATION);
-        }
-        // checks for GPS permission again, if it still isn't granted then the app will close. Change the line that calls System.exit(0) later on in development to something less abrasive.
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            System.exit(0);
-        }
-
-        //ask google for gps information
-        Location mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        //set new gps values
-        currentLat = valueOf(mCurrentLocation.getLatitude());
-        currentLong = valueOf(mCurrentLocation.getLongitude());
-
-        //print new values
-        System.out.println(currentLong);
-        System.out.println(currentLat);
-
-        //checks to make sure google didn't give us less accurate gps location than the last location if gave
-        if (mCurrentLocation.getLongitude() != 0.0) {
-            float accuracy = mCurrentLocation.getAccuracy();
-            long time = mCurrentLocation.getTime();
-
-            if (accuracy < bestAccuracy) {
-                bestResult = mCurrentLocation;
-                bestAccuracy = accuracy;
-                bestTime = time;
-            }
-        }
-
-        // Return best reading or null
-        if (bestAccuracy > minAccuracy || bestTime < minTime) {
-            return null;
-        }
-        else {
-            return bestResult;
-        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest, this);
     }
 
     //Checks to make sure Google Play isn't offline.
     private boolean servicesAvailable() {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         int result = googleAPI.isGooglePlayServicesAvailable(this);
-        if (result != ConnectionResult.SUCCESS) {
+        return result == ConnectionResult.SUCCESS;
 
-            return false;
-        }
-
-        return true;
     }
 
     // If the connection from google stops coming in do stuff.
@@ -219,29 +167,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         int numberOfBusinesses = 0;
         YelpAPI API = new YelpAPI();
-        ArrayList<String> businessIDs = new ArrayList<>();// important to use an Arraylist for the buisness ID values so its easier to iterate through them and retrieve them based on index in order of closest to furthest. (Or in whatever way we choose to sort them)
-        ArrayList<String> ratings = new ArrayList<String>();
-        ArrayList<String> cities = new ArrayList<String>();
-        ArrayList<String> states = new ArrayList<String>();
-        ArrayList<String> addresses = new ArrayList<String>();
-        ArrayList<String> categories = new ArrayList<String>();
-        ArrayList<String> phones = new ArrayList<String>();
-        ArrayList<String> restaurants = new ArrayList<String>();
+        ArrayList<String> businessIDs = new ArrayList<>();// important to use an Array list for the business ID values so its easier to iterate through them and retrieve them based on index in order of closest to furthest. (Or in whatever way we choose to sort them)
+        ArrayList<String> ratings = new ArrayList<>();
+        ArrayList<String> cities = new ArrayList<>();
+        ArrayList<String> states = new ArrayList<>();
+        ArrayList<String> addresses = new ArrayList<>();
+        ArrayList<String> categories = new ArrayList<>();
+        ArrayList<String> phones = new ArrayList<>();
+        ArrayList<String> restaurants = new ArrayList<>();
 
 
         // Everything you want to happen OUTSIDE of the GUI thread.
-            protected String doInBackground(String... params) {
+        protected String doInBackground(String... params) {
 
 
-                // While loop will prevent API calls until gps location is found. We should eventually implement zip searching as an alternative.
-                while(currentLat == null){
-
-                }
+            System.err.println("Waiting for GPS signal");
+            while (currentLat == null && currentLong == null) {
+            }
+            System.err.println("GPS signal found, contacting Yelp");
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            if(currentLat != null && currentLong !=null) {
-                API.setLocation(currentLat,currentLong);
+
+            if (currentLat != null && currentLong != null) {
+                API.setLocation(currentLat, currentLong);
 
             }//if
+            // else{put something in here to grab zip code and convert it to a gps location later.}
 
             // Starts the API, which will automatically contact yelp and populate the business information.
             API.run();
@@ -252,79 +202,46 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             // Makes a copy of the array of Business ID's found in the most recent Yelp API query. Resets the array list to avoid duplicate data.
             // Also clears the previous results if this is the second time hitting the button.
             businessIDs.clear();
+
             businessIDs = API.getBusinessIDList();
-                ratings = API.getRatingList();
-                cities = API.getCityList();
-                states = API.getStateList();
-                addresses = API.getAddressList();
-                categories = API.getCategoryList();
-                phones = API.getPhoneList();
-                restaurants = API.getNameList();
+            ratings = YelpAPI.getRatingList();
+            cities = YelpAPI.getCityList();
+            states = YelpAPI.getStateList();
+            addresses = YelpAPI.getAddressList();
+            categories = YelpAPI.getCategoryList();
+            phones = YelpAPI.getPhoneList();
+            restaurants = YelpAPI.getNameList();
 
 
-                for (int i = 0; i < numberOfBusinesses; i++) {
-                    firebaseHandler firebase = new firebaseHandler("Tastr Items");
-                    if(firebase.searchForYelpID(businessIDs.get(i))){
-
-                    }
-                    else{
-                       // Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
-                       // double lat = Double.parseDouble(currentLat);
-                       // double longi = Double.parseDouble(currentLong);
-                        //List<Address> addresses = null;
-                       // try {
-                            //addresses = gcd.getFromLocation(lat,longi,1);
-                       // } catch (IOException e) {
-                        //    e.printStackTrace();
-                        //}
-                        //if(addresses.size()>0){
-                           // firebase.setCity(addresses.get(0).getLocality());
-                            //firebase.setState(addresses.get(0).getAdminArea());
-                        //}
-                        TastrItem newItem = new TastrItem();
-                        //firebase.setCity("Anchorage");
-                        //firebase.setState("Alaska");
-                        firebase.setYelpID(businessIDs.get(i));
-                        newItem.setRating(ratings.get(i));
-                        firebase.setCity(cities.get(i));
-                        firebase.setState(states.get(i));
-                        newItem.setRestaurant(restaurants.get(i));
-                        newItem.setCategories(categories.get(i));
-                        newItem.setPhone(phones.get(i));
-                        newItem.setAddress(addresses.get(i));
-                        firebase.writeTastrToDatabase(newItem);
-                    }
-                }//for
+            for (int i = 0; i < numberOfBusinesses; i++) {
+                firebaseHandler firebase = new firebaseHandler("Tastr Items");
+                if (firebase.searchForYelpID(businessIDs.get(i))) {
+                    System.out.println("ID already exists");
+                } else {
+                    TastrItem newItem = new TastrItem();
+                    firebase.setYelpID(businessIDs.get(i));
+                    TastrItem.setRating(ratings.get(i));
+                    firebase.setCity(cities.get(i));
+                    firebase.setState(states.get(i));
+                    TastrItem.setRestaurant(restaurants.get(i));
+                    newItem.setCategories(categories.get(i));
+                    newItem.setPhone(phones.get(i));
+                    newItem.setAddress(addresses.get(i));
+                    firebase.writeTastrToDatabase(newItem);
+                }
+            }//for
 
             return null;
         }//doInBackground
 
-        // Everything you want to happen AFTER the doInBackground function is executed. Use this method to make changes to the GUI. IE listing all of the businesses found.
+        // Everything you want to happen AFTER the doInBackground function is executed. Use this method to make changes to the GUI.
         @Override
         protected void onPostExecute(String result) {
 
-            //error checking
-            if (numberOfBusinesses <= 0) {
+            if (numberOfBusinesses < 1) {
+                System.out.println("No businesses found");
 
             }//if
-
-            // if yelp finds any businesses then do stuff
-            else {
-
-                // This will clear the Business results from view technically, however the user won't notice a change unless the results change on the next API Call.
-                // This prevents duplicates from populating on the list as businesses are added. Feel free to comment the line out and test the program if you are confused about what I mean.
-
-
-                int count = 1;// for some reason i returns a two digit number and it screws up the counter as a string, so I just made a new variable for clarity.
-
-                // This populates the list of business ID's one at a time on a new line.
-                for (int i = 0; i < numberOfBusinesses; i++) {
-                    //listBusinesses("\n" + count + "->" + businessIDs.get(i));
-                    count++;
-
-                }//for
-
-            }//else
 
         }//On Post Execute
 
