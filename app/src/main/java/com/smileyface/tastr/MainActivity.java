@@ -212,9 +212,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             phones = YelpAPI.getPhoneList();
             restaurants = YelpAPI.getNameList();
 
-
+            firebaseHandler firebase = new firebaseHandler("Tastr Items");
             for (int i = 0; i < numberOfBusinesses; i++) {
-                firebaseHandler firebase = new firebaseHandler("Tastr Items");
                 if (firebase.searchForYelpID(businessIDs.get(i))) {
                     System.out.println("ID already exists");
                 } else {

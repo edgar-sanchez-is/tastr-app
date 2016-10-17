@@ -19,6 +19,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.List;
+
 
 public class TouchActivity extends Activity {
     private String msg;
@@ -30,9 +32,24 @@ public class TouchActivity extends Activity {
      */
     private GoogleApiClient client;
 
+
+    //tastrItem Queue
+    public List<TastrItem> itemQueue;
+
+    //potential temporary list of items to ignore that have been yucked or previously liked
+    //public List<TastrItem> ignoreItemsIDs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        //TODO: setup request tastr items from firebase
+        //int requestAmount = 15; trying not to hardcode 15 incase of modular request size in the future
+        //TODO: make "firebase" instantiation available in the scope of the touch module so that we can request and show items
+        //TODO: make a function that will return a list of TastrItems
+        //itemQueue = firebaseHandler.requestNewItems(requestAmount);
+
+        //load already liked items TODO: potential omitting list, do this after itemQueue is up and working
+        //ignoreItems = loadLikes(); add to this list as food is yucked
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_touch);
