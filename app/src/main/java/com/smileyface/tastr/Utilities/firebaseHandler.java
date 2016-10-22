@@ -1,8 +1,5 @@
 package com.smileyface.tastr.Utilities;
 
-import android.provider.ContactsContract;
-import android.util.Log;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,32 +10,28 @@ import com.smileyface.tastr.TastrItem;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by cbrant on 10/13/2016.
- */
 
 
 //TODO: move yelp api to the firebase handler becuase it should only be used when new items are requested
 public class firebaseHandler {
-    private FirebaseDatabase database;
-    private DatabaseReference reference;
+    private final DatabaseReference reference;
 
     // These strings represent "children" of the firebase, which is how things will be sorted. Example Under the data type TastrItems - > State - > City -> Restaurant -> Here you will find a list of food items under that particular restaurant.
     private String dataType = "Unknown";
-    private String state ="Unknown";
-    private String city ="Unknown";
-    private String YelpID= "Unknown";
+    private String state = "Unknown";
+    private String city = "Unknown";
+    private String restaurantName = "Unknown";
     private boolean foundID = false;
     private String search = "";
 
     // Getters and Setters for vars
 
-    public String getYelpID() {
-        return YelpID;
+    private String getRestaurantName() {
+        return restaurantName;
     }
 
-    public void setYelpID(String yelpID) {
-        YelpID = yelpID;
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
     }
 
     public String getDataType() {
@@ -49,7 +42,7 @@ public class firebaseHandler {
         this.dataType = dataType;
     }
 
-    public String getState() {
+    private String getState() {
         return state;
     }
 
@@ -57,7 +50,7 @@ public class firebaseHandler {
         this.state = state;
     }
 
-    public String getCity() {
+    private String getCity() {
         return city;
     }
 
@@ -66,59 +59,58 @@ public class firebaseHandler {
     }
 
     //constructor requires database reference string. IE "message" or "TastrItem" Basically it names the category in which to search for in the database.
-    public firebaseHandler(String ref){
-        database = FirebaseDatabase.getInstance();
+    public firebaseHandler(String ref) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         reference = database.getReference(ref);
     }
 
 
     // Method Specifically for writing a new TastrItem to the database.
 
-    public void writeTastrToDatabase(TastrItem newItem){
+    public void writeTastrToDatabase(TastrItem newItem) {
 
+        final Map<String, Object> ID = new HashMap<>();
+        ID.put("", restaurantName);
+        reference.updateChildren(ID);
 
-        // Define new parameters, this prevents errors when trying to write data to a state/city/ID we haven't added a restaurant to yet.
-        //reference.setValue(getState());
-        //reference.child(getState()).setValue(getCity());
-        //reference.child(getState()).child(getCity()).child(getYelpID());
+        // Create a new reference under the Restaurant hierarchy to write information such as Address and phone number.
+        DatabaseReference topLevelRef = reference.child(getRestaurantName());
+        topLevelRef.setValue("Menu");
+        DatabaseReference topMenuRef = topLevelRef.child("Menu");
+        DatabaseReference lowMenuRef = topMenuRef.child("Example Menu Item:");
+        DatabaseReference locationRef = topLevelRef.child("Locations").child(getState());
 
+        // Write new data to the database in the correct position.
+        topLevelRef.updateChildren(newItem.getRestaurauntMap(newItem));
+        lowMenuRef.updateChildren(newItem.getMenuMap(newItem));
+        Map<String, Object> locationMap = new HashMap<>();
+        locationMap.put(getCity(),newItem.getAddress());
+        locationRef.updateChildren(locationMap);
 
-        final Map<String, Object> ID = new HashMap<String, Object>();
-        ID.put("",YelpID);
-        reference.child(getState()).child(getCity()).updateChildren(ID);
-
-        // Pick correct place in the database to save new data.
-        DatabaseReference tempReference = reference.child(getState()).child(getCity()).child(getYelpID());
-
-        // Write new data to the database
-        tempReference.updateChildren(newItem.getMap(newItem));
 
     }
-
-    public void writeNewYelpID(){
-
-    }
-
-
-
 
     private String getSearch() {
         return search;
     }
-    public void setSearch(String input){
+
+    private void setSearch(String input) {
         search = input;
 
     }
 
-    public boolean searchForYelpID(String newSearch){
+    public boolean searchForYelpID(String newSearch) {
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.hasChild(getSearch())){
+                if (dataSnapshot.hasChild(getSearch())) {
                     setFoundID(true);
-                }else{setFoundID(false);}
+                } else {
+                    setFoundID(false);
+                }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
@@ -130,10 +122,11 @@ public class firebaseHandler {
         return foundID;
     }
 
-    public void setFoundID(boolean input){
+    private void setFoundID(boolean input) {
         foundID = input;
     }
-    public void readFromDatabase(){
+
+    public void readFromDatabase() {
 
         // Read from the database
         reference.addValueEventListener(new ValueEventListener() {

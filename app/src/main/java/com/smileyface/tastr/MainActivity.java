@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
 
     //Variables for requesting locations from Google.
-    private static final long POLL_FREQ = 1;
+    private static final long POLL_FREQ = 100;
     private static final long FASTEST_UPDATE_FREQ = 100 * 5;
     private LocationRequest mLocationRequest;
     private GoogleApiClient googleApiClient;
@@ -183,14 +183,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             System.err.println("Waiting for GPS signal");
             while (currentLat == null && currentLong == null) {
+                // While loop waits for gps signal to become non-null.
             }
             System.err.println("GPS signal found, contacting Yelp");
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-
+            // Double check for non null values to prevent app crash. Then set search location.
             if (currentLat != null && currentLong != null) {
                 API.setLocation(currentLat, currentLong);
 
             }//if
+
             // else{put something in here to grab zip code and convert it to a gps location later.}
 
             // Starts the API, which will automatically contact yelp and populate the business information.
@@ -218,11 +220,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     System.out.println("ID already exists");
                 } else {
                     TastrItem newItem = new TastrItem();
-                    firebase.setYelpID(businessIDs.get(i));
+                    firebase.setRestaurantName(restaurants.get(i));
                     TastrItem.setRating(ratings.get(i));
                     firebase.setCity(cities.get(i));
                     firebase.setState(states.get(i));
-                    TastrItem.setRestaurant(restaurants.get(i));
                     newItem.setCategories(categories.get(i));
                     newItem.setPhone(phones.get(i));
                     newItem.setAddress(addresses.get(i));

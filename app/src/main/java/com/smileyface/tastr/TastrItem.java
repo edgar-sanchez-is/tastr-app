@@ -15,7 +15,6 @@ public class TastrItem {
     private static String name;
     private static String description;
     private static String restaurant;
-    private static String yelpRestaurantID;
     private static String rating;
     private static String imagePath;
     private static String imageID;
@@ -52,18 +51,6 @@ public class TastrItem {
         return restaurant;
     }
 
-    public static void setRestaurant(String restaurant) {
-        TastrItem.restaurant = restaurant;
-    }
-
-    public static String getYelpRestaurantID() {
-        return yelpRestaurantID;
-    }
-
-    public static void setYelpRestaurantID(String yelpRestaurantID) {
-        TastrItem.yelpRestaurantID = yelpRestaurantID;
-    }
-
     private static String getRating() {
         return rating;
     }
@@ -76,7 +63,7 @@ public class TastrItem {
         return phone;
     }
 
-    private String getAddress() {
+    public String getAddress() {
         return address;
     }
 
@@ -106,8 +93,6 @@ public class TastrItem {
         tastrID = "Unknown";
         name = "Unknown";
         description = "Unknown";
-        restaurant = "Unknown";
-        yelpRestaurantID = "Unknown";
         rating = "Unknown";
         imagePath = "Unknown";
         imageID = "Unknown";
@@ -122,27 +107,36 @@ public class TastrItem {
         name = mName;
         description = mDescription;
         restaurant = mRestaurant;
-        yelpRestaurantID = mYelpID;
         rating = mRating;
         imagePath = mImagePath;
         imageID = mImageID;
     }
 
     //converts Tastr Item into a hash-map for database storage
-    public Map<String, Object> getMap(TastrItem newItem) {
+    public Map<String, Object> getRestaurauntMap(TastrItem newItem) {
 
         Map<String, Object> tastrMap = new HashMap<>();
+        tastrMap.put(" Rating", getRating());
+        tastrMap.put(" Category", newItem.getCategories());
 
-        tastrMap.put("01- Restaurant", getRestaurant());
-        tastrMap.put("02- Tastr ID", getTastrID());
-        tastrMap.put("03- Menu Item", getName());
-        tastrMap.put("04- Description", getDescription());
-        tastrMap.put("05- Rating", getRating());
-        tastrMap.put("06- Categories", newItem.getCategories());
-        tastrMap.put("07- Address", newItem.getAddress());
-        tastrMap.put("08- Phone", newItem.getPhone());
-        tastrMap.put("09- Image ID", getImageID());
-        tastrMap.put("10- Image Path", newItem.getImagePath());
+        return tastrMap;
+    }
+
+    public Map<String, Object> getlocationMap(TastrItem newItem) {
+
+        Map<String, Object> tastrMap = new HashMap<>();
+        tastrMap.put("", getTastrID());
+        return tastrMap;
+    }
+
+    public Map<String, Object> getMenuMap(TastrItem newItem) {
+
+        Map<String, Object> tastrMap = new HashMap<>();
+        tastrMap.put("Name", "Unknown");
+        tastrMap.put("Ingredients: ", "Unknown");
+        tastrMap.put("Tastr ID", "Unknown");
+        tastrMap.put("Image Path", getImagePath());
+        tastrMap.put("Image ID", getImageID());
 
 
         return tastrMap;

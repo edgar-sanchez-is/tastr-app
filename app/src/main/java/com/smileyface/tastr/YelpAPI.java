@@ -34,6 +34,7 @@ class YelpAPI implements Runnable {
      * Update OAuth credentials below from the YelpAPI Developers API site:
      * http://www.yelp.com/developers/getting_started/api_access
      */
+    private static final String ZOMATO_KEY = "9cdbf185a889eb45f9edfc10147b0800";
     private static final String CONSUMER_KEY = "cXrLIyuf1dhXyCeoKCRkHA";
     private static final String CONSUMER_SECRET = "nvdY0PsLigihJ6UoJb6HKycwvvE";
     private static final String TOKEN = "N8fy1BW4z_dyqruZXtrA709udr4pmJ6U";
@@ -256,8 +257,12 @@ class YelpAPI implements Runnable {
             cityList.add(temp1.get("city").toString());
             stateList.add(temp1.get("state_code").toString());
             phoneList.add(temp.get("phone").toString());
-            categoryList.add(temp.get("categories").toString());
-            addressList.add(temp1.get("address").toString().replaceAll("\\\\", ""));
+            String tempCat = temp.get("categories").toString();
+            tempCat = tempCat.replaceAll("\\\\\\\\", " ");
+            categoryList.add(tempCat);
+            String tempAdr = temp1.get("address").toString();
+            tempAdr = tempAdr.replaceAll("\\\\", " ");
+            addressList.add(tempAdr);
             nameList.add(temp.get("name").toString());
 
         }
