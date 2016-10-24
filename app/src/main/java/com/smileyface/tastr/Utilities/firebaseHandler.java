@@ -24,9 +24,7 @@ public class firebaseHandler {
     private String state = "Unknown";
     private String city = "Unknown";
     private String restaurantName = "Unknown";
-    private boolean foundID = false;
-    private String search = "";
-
+ 
     // Getters and Setters for vars
 
     private String getRestaurantName() {
@@ -67,9 +65,8 @@ public class firebaseHandler {
         reference = database.getReference(ref);
     }
 
-
     // Method Specifically for writing a new TastrItem to the database.
-
+    // This includes a default menu item, since we are currently doing manual entry for menu items. 
     public void writeTastrToDatabase(TastrItem newItem) {
 
         final Map<String, Object> ID = new HashMap<>();
@@ -104,50 +101,14 @@ public class firebaseHandler {
         locationRef.updateChildren(locationMap);
 
 
-    }
-
-    private String getSearch() {
-        return search;
-    }
-
-    private void setSearch(String input) {
-        search = input;
-
-    }
-
-    public boolean searchForYelpID(String newSearch) {
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.hasChild(getSearch())) {
-                    setFoundID(true);
-                } else {
-                    setFoundID(false);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-            }
-        };
-
-        setSearch(newSearch);
-        reference.child(getState()).child(getCity()).addListenerForSingleValueEvent(postListener);
-        return foundID;
-    }
-
-    private void setFoundID(boolean input) {
-        foundID = input;
-    }
-
-
-    // getters and setters for retreiving data from the database.
+    }// writeToTastrDatabase
+    
+    // getters and setters for reading data from the database.
     ArrayList<String> readerList = new ArrayList<>();
     void setReaderList(String input){
         readerList.add(input);
     }
+    
     public ArrayList<String> getReaderList(){
         return readerList;
     }
@@ -161,7 +122,9 @@ public class firebaseHandler {
         readerDone = input;
     }
 
-    // You can either specify a reference for the database to search with this method, or use the one below to use the default search which is created when instantiating a new firebaseHandler.
+    //Specify a reference for the database to search with this method.
+    //Temporarily fills a single array list with the child contents of search reference. 
+    //Eventually this will be turned into a JSON object containing a list of tastr items.
     public void readFromDatabase(DatabaseReference temporaryRef) {
 
         ArrayList<String> tmpList = new ArrayList<>();
@@ -202,10 +165,10 @@ public class firebaseHandler {
 
             }
         });
-    }
+    }//read from database
 
+    // will use the default reference as the search parameter for reading from the database.
     public void readFromDatabase() {
-        //readerList.clear(); // clears all the data from the list to avoid duplicate data.
         reference.addChildEventListener(new ChildEventListener(){
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Map<?,?> tempMap;
@@ -243,15 +206,6 @@ public class firebaseHandler {
         });
 
     }
-
-    //TODO:in firebaseHandler: create func requestNewItems(int requestSize)
-    //List<TastrItem> requestNewItems(int requestSize)
-    //{
-    //  get yelp stuff
-    //  get firebase items
-    //  filter list
-    //  return list
-    //}
-}
+}//read from database
 
 
