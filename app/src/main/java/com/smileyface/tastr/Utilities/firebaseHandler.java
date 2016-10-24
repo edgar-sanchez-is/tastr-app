@@ -78,14 +78,27 @@ public class firebaseHandler {
 
         // Create a new reference under the Restaurant hierarchy to write information such as Address and phone number.
         DatabaseReference topLevelRef = reference.child(getRestaurantName());
-        topLevelRef.setValue("Menu");
+        Map<String, Object> menuMap = new HashMap<>();
+        menuMap.put("Menu",null);
+        topLevelRef.updateChildren(menuMap);
         DatabaseReference topMenuRef = topLevelRef.child("Menu");
-        DatabaseReference lowMenuRef = topMenuRef.child("Example Menu Item:");
+
+        Map<String, Object> midMenuMap = new HashMap<>();
+        midMenuMap.put("**Default Menu Item**",null);
+        topMenuRef.updateChildren(midMenuMap);
+        DatabaseReference midMenuRef = topMenuRef.child("**Default Menu Item**");
+        Map<String, Object> lowMenuMap = new HashMap<>();
+        lowMenuMap.put("Image Path","https://TestURL.com/image.jpg");
+        lowMenuMap.put("Ingredients","Example Ingredient");
+        lowMenuMap.put("Name","Example Item");
+        lowMenuMap.put("Tastr ID","Example Tastr ID");
+        midMenuRef.updateChildren(lowMenuMap);
+
+
         DatabaseReference locationRef = topLevelRef.child("Locations").child(getState());
 
         // Write new data to the database in the correct position.
         topLevelRef.updateChildren(newItem.getRestaurauntMap(newItem));
-        lowMenuRef.updateChildren(newItem.getMenuMap(newItem));
         Map<String, Object> locationMap = new HashMap<>();
         locationMap.put(getCity(),newItem.getAddress());
         locationRef.updateChildren(locationMap);
