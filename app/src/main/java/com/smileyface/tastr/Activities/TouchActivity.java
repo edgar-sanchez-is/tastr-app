@@ -199,6 +199,7 @@ public class TouchActivity extends Activity {
 
 
         yuck.setOnDragListener(new View.OnDragListener() {
+            int i = 0;
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 switch (event.getAction()) {
@@ -236,23 +237,11 @@ public class TouchActivity extends Activity {
                             v.setVisibility(View.VISIBLE);
                         }
 
+                        if (i <imagePath.size()) {
+                            setNewImage(imagePath.get(i));
+                            i++;
+                        }else{i = 0;}
 
-                        new AlertDialog.Builder(TouchActivity.this)
-                                .setTitle("Collision Detected")
-                                .setMessage("Yuck!")
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // continue with delete
-                                    }
-                                })
-                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // do nothing
-                                    }
-                                })
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-                        onCreate(null);
 
                         break;
 
@@ -325,8 +314,9 @@ public class TouchActivity extends Activity {
 
     public void setNewImage(String url){
         new downloadImageTask((ImageView) img)
-                .execute("https://firebasestorage.googleapis.com/v0/b/unt-team-project.appspot.com/o/Bagheri%E2%80%99s%20Restaurant%2FFettuccine%20Alfredo.jpg?alt=media&token=c85b230a-9c53-4c5e-89db-1823bb760a03");
+                .execute(url);
     }
+
 
     @Override
     public void onStop() {
@@ -339,8 +329,10 @@ public class TouchActivity extends Activity {
     }
 
     private class dataLoader extends AsyncTask<String, Void, String> {
+
+        // eventually this will be automatic, but for now we only have one restauraunt with data in it.
         firebaseHandler firebase = new firebaseHandler("Tastr Items/Bagheri's Restaurant/Menu");
-        boolean inititalStartFlag = true;
+        boolean initialStartFlag = true;
         // Everything you want to happen OUTSIDE of the GUI thread.
         protected String doInBackground(String... params) {
             System.out.println("Now Starting Background Task inside TouchActivity");
@@ -354,15 +346,15 @@ public class TouchActivity extends Activity {
         // Everything you want to happen AFTER the doInBackground function is executed. Use this method to make changes to the GUI.
         @Override
         protected void onPostExecute(String result) {
-            if(inititalStartFlag = true) {
+            if(initialStartFlag = true) {
                 ArrayList<String> tmp = firebase.getReaderList();
-                setNewImage("");
-                inititalStartFlag = false;
+                setNewImage(tmp.get(0));
+                initialStartFlag = false;
+                imagePath = tmp;
+
             }
 
-
         }//On Post Execute
-
     }//loader class
 
 }

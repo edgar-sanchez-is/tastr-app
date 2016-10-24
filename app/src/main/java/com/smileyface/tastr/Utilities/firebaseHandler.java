@@ -162,7 +162,7 @@ public class firebaseHandler {
                 while(it.hasNext()){
                     Map.Entry pair = (Map.Entry) it.next();
                     setReaderList(pair.getValue().toString());
-                    System.out.println(pair.getValue().toString() +  " This is from the child loop ");
+                    System.out.println(pair.getValue().toString());
                     it.remove();
                 }
                 setReaderDone(true);
