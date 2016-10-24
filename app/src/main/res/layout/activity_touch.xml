@@ -9,31 +9,19 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.smileyface.tastr.TouchActivity">
-
-    <ImageView
-        app:srcCompat="@android:color/holo_purple"
-        android:id="@+id/imageView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:background="@android:color/holo_purple"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        tools:ignore="ContentDescription"
-        tools:layout_editor_absoluteY="233dp"
-        tools:layout_editor_absoluteX="145dp" />
+    tools:context="com.smileyface.tastr.Activities.TouchActivity">
 
     <ImageView
         app:srcCompat="@android:color/holo_red_dark"
         android:id="@+id/yuck"
         tools:ignore="ContentDescription"
         android:background="@android:color/holo_red_dark"
-        android:layout_width="250dp"
         android:layout_height="80dp"
         tools:layout_editor_absoluteY="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignBottom="@+id/yuck_frame"
+        android:layout_centerHorizontal="true"
+        android:layout_width="250dp" />
 
     <ImageView
         app:srcCompat="@android:color/holo_green_dark"
@@ -45,6 +33,26 @@
         tools:layout_editor_absoluteY="491dp"
         tools:layout_editor_absoluteX="64dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="0dp" />
+
+    <ImageView
+        app:srcCompat="@android:color/holo_purple"
+        android:id="@+id/imageView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="ContentDescription"
+        tools:layout_editor_absoluteY="233dp"
+        tools:layout_editor_absoluteX="145dp"
+        android:cropToPadding="true"
+        android:adjustViewBounds="true"
+        android:hapticFeedbackEnabled="true"
+        android:maxWidth="200dp"
+        android:minHeight="75dp"
+        android:minWidth="75dp"
+        android:maxHeight="200dp" />
 
 </RelativeLayout>

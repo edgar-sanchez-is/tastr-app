@@ -1,4 +1,4 @@
-package com.smileyface.tastr;
+package com.smileyface.tastr.Yelp;
 
 
 import com.beust.jcommander.JCommander;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 
 @SuppressWarnings("ALL")
-class YelpAPI implements Runnable {
+public class YelpAPI implements Runnable {
 
     private static String DEFAULT_TERM = "restaurants near me";
     private static final String DEFAULT_LOCATION = "Houston,Texas";

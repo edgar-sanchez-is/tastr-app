@@ -1,4 +1,4 @@
-package com.smileyface.tastr;
+package com.smileyface.tastr.Other;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -138,11 +138,10 @@ public class TastrItem {
         tastrMap.put("Image Path", getImagePath());
         tastrMap.put("Image ID", getImageID());
 
-
         return tastrMap;
     }
 
-    void setAddress(String address) {
+   public void setAddress(String address) {
         TastrItem.address = address;
     }
 

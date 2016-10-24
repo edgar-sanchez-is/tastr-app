@@ -1,9 +1,10 @@
-package com.smileyface.tastr;
+package com.smileyface.tastr.Activities;
 
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -18,7 +19,12 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.smileyface.tastr.R;
+import com.smileyface.tastr.Other.TastrItem;
+import com.smileyface.tastr.Utilities.downloadImageTask;
+import com.smileyface.tastr.Utilities.firebaseHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -36,9 +42,14 @@ public class TouchActivity extends Activity {
     //tastrItem Queue
     public List<TastrItem> itemQueue;
 
+
+    public ArrayList<String> imagePath = new ArrayList<>();
+    public void setImagePath(ArrayList<String> imagePath) {
+        this.imagePath = imagePath;
+    }
+
     //potential temporary list of items to ignore that have been yucked or previously liked
     //public List<TastrItem> ignoreItemsIDs;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -53,9 +64,16 @@ public class TouchActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_touch);
+
+        // Connect to database and get Tastr Items
+        dataLoader loader = new dataLoader();
+        loader.execute();
+
         img = (ImageView) findViewById(R.id.imageView);
         ImageView yum = (ImageView) findViewById(R.id.yum);
         ImageView yuck = (ImageView) findViewById(R.id.yuck);
+
+
 
         img.setOnDragListener(new View.OnDragListener() {
             @Override
@@ -278,7 +296,6 @@ public class TouchActivity extends Activity {
         return !dragEvent.getResult();
     }
 
-
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -303,6 +320,12 @@ public class TouchActivity extends Activity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
+
+    }
+
+    public void setNewImage(String url){
+        new downloadImageTask((ImageView) img)
+                .execute("https://firebasestorage.googleapis.com/v0/b/unt-team-project.appspot.com/o/Bagheri%E2%80%99s%20Restaurant%2FFettuccine%20Alfredo.jpg?alt=media&token=c85b230a-9c53-4c5e-89db-1823bb760a03");
     }
 
     @Override
@@ -314,4 +337,32 @@ public class TouchActivity extends Activity {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+    private class dataLoader extends AsyncTask<String, Void, String> {
+        firebaseHandler firebase = new firebaseHandler("Tastr Items/Bagheri's Restaurant/Menu");
+        boolean inititalStartFlag = true;
+        // Everything you want to happen OUTSIDE of the GUI thread.
+        protected String doInBackground(String... params) {
+            System.out.println("Now Starting Background Task inside TouchActivity");
+            firebase.readFromDatabase();
+            // Wait for the database to actually get  some information.
+            while(!firebase.isReaderDone()){}
+           setImagePath(firebase.getReaderList());
+            return null;
+        }//doInBackground
+
+        // Everything you want to happen AFTER the doInBackground function is executed. Use this method to make changes to the GUI.
+        @Override
+        protected void onPostExecute(String result) {
+            if(inititalStartFlag = true) {
+                ArrayList<String> tmp = firebase.getReaderList();
+                setNewImage("");
+                inititalStartFlag = false;
+            }
+
+
+        }//On Post Execute
+
+    }//loader class
+
 }

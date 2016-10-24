@@ -1,4 +1,4 @@
-package com.smileyface.tastr;
+package com.smileyface.tastr.Yelp;
 
 import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.Token;
