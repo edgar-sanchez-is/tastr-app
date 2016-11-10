@@ -14,6 +14,11 @@ import java.util.ArrayList;
 
 public class yelpDataExecutor extends AsyncTask<String, Void, String> {
 
+    boolean hasNewData = false;
+
+    public boolean checkHasNewData() {
+        return hasNewData;
+    }
 
     int numberOfBusinesses = 0;
     YelpAPI API = new YelpAPI();
@@ -34,7 +39,14 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
     *params[0] = latitude
     *params[1] = longitude
     */
+
+
+    public ArrayList<String> getRestaurants() {
+
+        return restaurants;
+    }
     protected String doInBackground(String... params) {
+        hasNewData = false;
         System.err.println("Waiting for GPS signal");
         System.err.println("GPS signal found, contacting Yelp");
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
@@ -64,24 +76,22 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
         categories = YelpAPI.getCategoryList();
         phones = YelpAPI.getPhoneList();
         restaurants = YelpAPI.getNameList();
-
+/*
         firebaseHandler firebase = new firebaseHandler("Tastr Items");
         for (int i = 0; i < numberOfBusinesses; i++) {
-            if (firebase.searchForYelpID(businessIDs.get(i))) {
-                System.out.println("ID already exists");
-            } else {
-                TastrItem newItem = new TastrItem();
-                firebase.setRestaurantName(restaurants.get(i));
-                TastrItem.setRating(ratings.get(i));
-                firebase.setCity(cities.get(i));
-                firebase.setState(states.get(i));
-                newItem.setCategories(categories.get(i));
-                newItem.setPhone(phones.get(i));
-                newItem.setAddress(addresses.get(i));
-                firebase.writeTastrToDatabase(newItem);
-            }
-        }//for
 
+            TastrItem newItem = new TastrItem();
+            firebase.setRestaurantName(restaurants.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
+            TastrItem.setRating(ratings.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
+            firebase.setCity(cities.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
+            firebase.setState(states.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
+            newItem.setCategories(categories.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
+            newItem.setPhone(phones.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
+            newItem.setAddress(addresses.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
+            firebase.writeTastrToDatabase(newItem);
+
+        }//for
+*/
         return null;
     }//doInBackground
 
@@ -92,6 +102,8 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
         if (numberOfBusinesses < 1) {
             System.err.println("No businesses found");
         }//if
+        hasNewData = true;
+
 
     }//On Post Execute
 

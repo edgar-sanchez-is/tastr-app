@@ -252,18 +252,18 @@ public class YelpAPI implements Runnable {
         for (int i = 0; i < businesses.size(); i++) {
             JSONObject temp = (JSONObject) businesses.get(i);
             JSONObject temp1 = (JSONObject) temp.get("location");
-            BusinessIDList.add(temp.get("id").toString());
-            RatingList.add(temp.get("rating").toString());
-            cityList.add(temp1.get("city").toString());
-            stateList.add(temp1.get("state_code").toString());
-            phoneList.add(temp.get("phone").toString());
-            String tempCat = temp.get("categories").toString();
+            BusinessIDList.add(temp.get("id").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
+            RatingList.add(temp.get("rating").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
+            cityList.add(temp1.get("city").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
+            stateList.add(temp1.get("state_code").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
+            phoneList.add(temp.get("phone").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
+            String tempCat = temp.get("categories").toString().replaceAll("[.#$\\]\\\\\\[]", "");
             tempCat = tempCat.replaceAll("\\\\\\\\", " ");
             categoryList.add(tempCat);
-            String tempAdr = temp1.get("address").toString();
-            tempAdr = tempAdr.replaceAll("\\\\", " ");
+            String tempAdr = temp1.get("address").toString().replaceAll("[.#$\\]\\\\\\[]", "");
+            tempAdr = tempAdr.replaceAll("[.#$\\]\\\\\\[]", "");
             addressList.add(tempAdr);
-            nameList.add(temp.get("name").toString());
+            nameList.add(temp.get("name").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
 
         }
 

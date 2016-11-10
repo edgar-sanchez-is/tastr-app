@@ -23,15 +23,21 @@ import com.smileyface.tastr.R;
 import com.smileyface.tastr.Other.TastrItem;
 import com.smileyface.tastr.Utilities.downloadImageTask;
 import com.smileyface.tastr.Utilities.firebaseHandler;
+import com.smileyface.tastr.Utilities.locationHandler;
+import com.smileyface.tastr.Utilities.yelpDataExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 public class TouchActivity extends Activity {
     private String msg;
     private ImageView img;
     private RelativeLayout.LayoutParams layoutParams;
+    yelpDataExecutor yelp = new yelpDataExecutor();
+    locationHandler curLoc = new locationHandler(this);
+    firebaseHandler firebase;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -44,8 +50,9 @@ public class TouchActivity extends Activity {
 
 
     public ArrayList<String> imagePath = new ArrayList<>();
-    public void setImagePath(ArrayList<String> imagePath) {
-        this.imagePath = imagePath;
+
+    public void setImagePath(String path) {
+        this.imagePath.add(path);
     }
 
     //potential temporary list of items to ignore that have been yucked or previously liked
@@ -66,9 +73,13 @@ public class TouchActivity extends Activity {
         setContentView(R.layout.activity_touch);
 
         // Connect to database and get Tastr Items
+        curLoc.askForlocation();
+        yelp.execute(curLoc.getCurrentLat(), curLoc.getCurrentLong());
         dataLoader loader = new dataLoader();
         loader.execute();
 
+
+        System.err.println("Executing Yelp Call");
         img = (ImageView) findViewById(R.id.imageView);
         ImageView yum = (ImageView) findViewById(R.id.yum);
         ImageView yuck = (ImageView) findViewById(R.id.yuck);
@@ -313,8 +324,7 @@ public class TouchActivity extends Activity {
     }
 
     public void setNewImage(String url){
-        new downloadImageTask((ImageView) img)
-                .execute(url);
+        new downloadImageTask(img).execute(url);
     }
 
 
@@ -330,16 +340,32 @@ public class TouchActivity extends Activity {
 
     private class dataLoader extends AsyncTask<String, Void, String> {
 
-        // eventually this will be automatic, but for now we only have one restauraunt with data in it.
-        firebaseHandler firebase = new firebaseHandler("Tastr Items/Bagheri's Restaurant/Menu");
+
+        boolean yelpLoaded = yelp.checkHasNewData();
+
+
+
         boolean initialStartFlag = true;
         // Everything you want to happen OUTSIDE of the GUI thread.
         protected String doInBackground(String... params) {
-            System.out.println("Now Starting Background Task inside TouchActivity");
+
+
+            ArrayList<String> restaurants = yelp.getRestaurants();
+            for (int i = 0; i < restaurants.size(); i++) {
+                firebase = new firebaseHandler("Tastr Items/" + restaurants.get(i) + "/Menu/**Default Menu Item**/Image Path");
+                System.err.println(("/Tastr Items/" + restaurants.get(i) + "/Menu/**Default Menu Item**/Image Path"));
+
+                System.err.println("Checking for menu items at ----> " + restaurants.get(i));
             firebase.readFromDatabase();
             // Wait for the database to actually get  some information.
-            while(!firebase.isReaderDone()){}
-           setImagePath(firebase.getReaderList());
+                while (!firebase.isReaderDone()) {
+
+                }
+                for (int j = 0; j < firebase.getReaderList().size(); j++) {
+                    System.err.println("Adding Image Path ----> " + firebase.getReaderList().get(j));
+                    setImagePath(firebase.getReaderList().get(j));
+                }
+            }
             return null;
         }//doInBackground
 
@@ -347,10 +373,12 @@ public class TouchActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             if(initialStartFlag = true) {
-                ArrayList<String> tmp = firebase.getReaderList();
-                setNewImage(tmp.get(0));
+                System.err.println(imagePath.get(0));
+
+                setNewImage(imagePath.get(0));
+                imagePath.remove(0);
                 initialStartFlag = false;
-                imagePath = tmp;
+
 
             }
 

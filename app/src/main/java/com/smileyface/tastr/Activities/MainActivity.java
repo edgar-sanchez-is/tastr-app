@@ -38,26 +38,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listenForLocation location = new listenForLocation();
-        location.execute(this);
     }//On Create
 
-    private class listenForLocation extends AsyncTask<Activity, Void, locationHandler> {
-
-        protected locationHandler doInBackground(Activity... params) {
-            locationHandler curLoc = new locationHandler(params[0]);
-            curLoc.askForlocation();
-            while (curLoc.getCurrentLong() == null){
-                // wait for an actual location update
-            }
-            return curLoc;
-        }//doInBackground
-
-        @Override
-        protected void onPostExecute(locationHandler result) {
-            yelpDataExecutor load = new yelpDataExecutor();
-            load.execute(result.getCurrentLat(),result.getCurrentLong());
-
-        }//On Post Execute
-    }//listen for location Class
 }//MainActivity Class

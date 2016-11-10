@@ -169,12 +169,14 @@ public class firebaseHandler {
 
     // will use the default reference as the search parameter for reading from the database.
     public void readFromDatabase() {
+
         reference.addChildEventListener(new ChildEventListener(){
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Map<?,?> tempMap;
                 tempMap = (Map<?, ?>) dataSnapshot.getValue();
                 Iterator it = tempMap.entrySet().iterator();
                 while(it.hasNext()){
+                    System.err.println("Building Map From Firebase");
                     Map.Entry pair = (Map.Entry) it.next();
                     setReaderList(pair.getValue().toString());
                     System.out.println(pair.getValue().toString());
