@@ -17,14 +17,14 @@ import java.util.Map;
 
 //TODO: move yelp api to the firebase handler becuase it should only be used when new items are requested
 public class firebaseHandler {
-    private final DatabaseReference reference;
+    private  DatabaseReference reference;
 
     // These strings represent "children" of the firebase, which is how things will be sorted. Example Under the data type TastrItems - > State - > City -> Restaurant -> Here you will find a list of food items under that particular restaurant.
     private String dataType = "Unknown";
     private String state = "Unknown";
     private String city = "Unknown";
     private String restaurantName = "Unknown";
- 
+    FirebaseDatabase database;
     // Getters and Setters for vars
 
     private String getRestaurantName() {
@@ -61,7 +61,12 @@ public class firebaseHandler {
 
     //constructor requires database reference string. IE "message" or "TastrItem" Basically it names the category in which to search for in the database.
     public firebaseHandler(String ref) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference(ref);
+    }
+
+    public void changeReference(String ref){
+
         reference = database.getReference(ref);
     }
 
@@ -122,18 +127,12 @@ public class firebaseHandler {
         readerDone = input;
     }
 
-    //Specify a reference for the database to search with this method.
-    //Temporarily fills a single array list with the child contents of search reference. 
-    //Eventually this will be turned into a JSON object containing a list of tastr items.
-    public void readFromDatabase(DatabaseReference temporaryRef) {
+    public void readFromDatabase() {
 
-        ArrayList<String> tmpList = new ArrayList<>();
-        temporaryRef.addChildEventListener(new ChildEventListener(){
-
+        reference.addChildEventListener(new ChildEventListener(){
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Map<?,?> tempMap;
                 tempMap = (Map<?, ?>) dataSnapshot.getValue();
-
                 Iterator it = tempMap.entrySet().iterator();
                 while(it.hasNext()){
                     Map.Entry pair = (Map.Entry) it.next();
@@ -144,9 +143,9 @@ public class firebaseHandler {
                 setReaderDone(true);
             }
 
-
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
 
             }
 
@@ -165,42 +164,39 @@ public class firebaseHandler {
 
             }
         });
-    }//read from database
 
-    // will use the default reference as the search parameter for reading from the database.
-    public void readFromDatabase() {
+    }
 
-        reference.addChildEventListener(new ChildEventListener(){
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Map<?,?> tempMap;
-                tempMap = (Map<?, ?>) dataSnapshot.getValue();
-                Iterator it = tempMap.entrySet().iterator();
-                while(it.hasNext()){
-                    System.err.println("Building Map From Firebase");
-                    Map.Entry pair = (Map.Entry) it.next();
-                    setReaderList(pair.getValue().toString());
-                    System.out.println(pair.getValue().toString());
-                    it.remove();
+    // Use this if what you are looking for has children. (IE Menu)
+    public void readKeyFromDatabase() {
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    setReaderList(child.getKey().toString());
+                    System.out.println(child.getKey().toString());
                 }
                 setReaderDone(true);
             }
-
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+            public void onCancelled(DatabaseError databaseError) {
 
             }
+        });
+    }
+    // If what you are looking for won't have any children (IE Image Path)
+    public void readValueFromDatabase() {
 
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
+                    setReaderList(dataSnapshot.getValue().toString());
+
+                setReaderDone(true);
             }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 

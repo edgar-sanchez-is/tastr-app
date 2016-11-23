@@ -29,6 +29,7 @@ import com.smileyface.tastr.Utilities.yelpDataExecutor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
 
 
 public class TouchActivity extends Activity {
@@ -38,21 +39,25 @@ public class TouchActivity extends Activity {
     yelpDataExecutor yelp = new yelpDataExecutor();
     locationHandler curLoc = new locationHandler(this);
     firebaseHandler firebase;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
 
 
     //tastrItem Queue
-    public List<TastrItem> itemQueue;
+    public ArrayList<TastrItem> itemQueue;
 
 
     public ArrayList<String> imagePath = new ArrayList<>();
+    private ArrayList<String> menuItem = new ArrayList<>();
+    private ArrayList<String> restNames = new ArrayList<>();
 
     public void setImagePath(String path) {
         this.imagePath.add(path);
+    }
+    public void addMenuItem(String item){
+        menuItem.add(item);
+    }
+    public void addRes(ArrayList<String> list){
+        restNames = list;
     }
 
     //potential temporary list of items to ignore that have been yucked or previously liked
@@ -346,39 +351,65 @@ public class TouchActivity extends Activity {
 
 
         boolean initialStartFlag = true;
-        // Everything you want to happen OUTSIDE of the GUI thread.
+        // Everything you want to happen OUTSIDE of the GUI thread. IE this is a background process.
         protected String doInBackground(String... params) {
 
+            // add a local list of the restaurants found at yelp and a reference for the background thread to process.
+            addRes(yelp.getRestaurants());
+            // initialize firebase handler class
 
-            ArrayList<String> restaurants = yelp.getRestaurants();
-            for (int i = 0; i < restaurants.size(); i++) {
-                firebase = new firebaseHandler("Tastr Items/" + restaurants.get(i) + "/Menu/**Default Menu Item**/Image Path");
-                System.err.println(("/Tastr Items/" + restaurants.get(i) + "/Menu/**Default Menu Item**/Image Path"));
 
-                System.err.println("Checking for menu items at ----> " + restaurants.get(i));
-            firebase.readFromDatabase();
-            // Wait for the database to actually get  some information.
+            // Clay's Nasty Algorithm for retrieving data from firebase
+
+            // loop through each restaurant and add all the menu items from each one. I think we need to randomize this list later on to provide variety in the app.
+            for (int i = 0; i < restNames.size(); i++) {
+                firebase = new firebaseHandler("Tastr Items/" + restNames.get(i) + "/Menu"); //Change where in the database we want to search for information
+                System.err.println("Adding Menu From --> " + restNames.get(i));
+
+                firebase.readKeyFromDatabase(); // Search the database for any Menu items available and put them into a list
+
+                // Wait for firebase to finish adding new data
                 while (!firebase.isReaderDone()) {
+                    try {
+                        sleep(100); // wait 100 ms before checking again, saves cpu
+                    } catch (InterruptedException e) {
+                        e.printStackTrace(); // if there is a problem while sleeping, print out the errors encountered.
+                    }
+                }
+                int oldMenuSize = menuItem.size(); // prevents adding duplicate menu items
+                System.err.println("Menu Size So far ----->" + menuItem.size());
+                menuItem.addAll(firebase.getReaderList());
+
+                for (int k = oldMenuSize; k< menuItem.size(); k++){
+                    firebase = new firebaseHandler("Tastr Items/" + restNames.get(i) + "/Menu/" + menuItem.get(k) + "/Image Path");
+
+                    System.err.println("Tastr Items/" + restNames.get(i) + "/Menu/" + menuItem.get(k) + "/Image Path");
+
+                    firebase.readValueFromDatabase();
+                    // Wait for firebase to finish adding new data
+                    while (!firebase.isReaderDone()) {
+                    }
+                    System.err.println("Image Paths have been added ----> " + firebase.getReaderList().get(0));
+
+                    imagePath.addAll(firebase.getReaderList());
 
                 }
-                for (int j = 0; j < firebase.getReaderList().size(); j++) {
-                    System.err.println("Adding Image Path ----> " + firebase.getReaderList().get(j));
-                    setImagePath(firebase.getReaderList().get(j));
-                }
+
+
             }
+
             return null;
         }//doInBackground
 
         // Everything you want to happen AFTER the doInBackground function is executed. Use this method to make changes to the GUI.
         @Override
         protected void onPostExecute(String result) {
-            if(initialStartFlag = true) {
-                System.err.println(imagePath.get(0));
+            if(initialStartFlag = true && !imagePath.isEmpty()) {
+                System.err.println("Trying to download image now ----> "+imagePath.get(0));
 
                 setNewImage(imagePath.get(0));
                 imagePath.remove(0);
                 initialStartFlag = false;
-
 
             }
 

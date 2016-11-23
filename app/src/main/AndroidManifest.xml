@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.TouchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,7 +35,6 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".Yelp.YelpActivity" />
-        <activity android:name=".Activities.TouchActivity" />
         <activity
             android:name=".Activities.SettingsActivity"
             android:label="@string/title_activity_settings"
