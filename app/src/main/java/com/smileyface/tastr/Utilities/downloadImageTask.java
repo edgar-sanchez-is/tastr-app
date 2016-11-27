@@ -8,28 +8,34 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
+
 // This class takes a URL and downloads the image at the url.
 public class downloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    ImageView tempImage;
+        ImageView tempImage;
+        public boolean doneLoading = false;
 
-    public downloadImageTask(ImageView bmImage) {
+
+        public downloadImageTask(ImageView bmImage) {
         this.tempImage = bmImage;
-    }
 
-    protected Bitmap doInBackground(String... urls) {
+        }
+
+        protected Bitmap doInBackground(String... urls) {
         String inputURL = urls[0];
         Bitmap tempBmap = null;
+
         try {
-            InputStream in = new java.net.URL(inputURL).openStream();
-            tempBmap = BitmapFactory.decodeStream(in);
+                InputStream in = new java.net.URL(inputURL).openStream();
+                tempBmap = BitmapFactory.decodeStream(in);
         } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
         }
         return tempBmap;
-    }
+        }
 
-    protected void onPostExecute(Bitmap result) {
+        protected void onPostExecute(Bitmap result) {
+                doneLoading = true;
         tempImage.setImageBitmap(result);
-    }
+        }
 }

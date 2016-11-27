@@ -3,8 +3,7 @@ package com.smileyface.tastr.Utilities;
 import android.os.AsyncTask;
 import android.os.Process;
 
-import com.smileyface.tastr.Other.TastrItem;
-import com.smileyface.tastr.Yelp.*;
+import com.smileyface.tastr.Yelp.YelpAPI;
 
 import java.util.ArrayList;
 

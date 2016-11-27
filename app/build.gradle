@@ -42,6 +42,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     compile 'com.google.android.gms:play-services-appindexing:9.6.1'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
 
 // Required for Google Firebase

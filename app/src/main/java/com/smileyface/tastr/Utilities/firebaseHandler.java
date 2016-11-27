@@ -8,25 +8,26 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.smileyface.tastr.Other.TastrItem;
 
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 
-
 //TODO: move yelp api to the firebase handler becuase it should only be used when new items are requested
 public class firebaseHandler {
-    private  DatabaseReference reference;
-
+    private DatabaseReference reference;
+    JSONObject temp;
     // These strings represent "children" of the firebase, which is how things will be sorted. Example Under the data type TastrItems - > State - > City -> Restaurant -> Here you will find a list of food items under that particular restaurant.
     private String dataType = "Unknown";
     private String state = "Unknown";
     private String city = "Unknown";
     private String restaurantName = "Unknown";
     FirebaseDatabase database;
-    // Getters and Setters for vars
 
+    // Getters and Setters
     private String getRestaurantName() {
         return restaurantName;
     }
@@ -65,7 +66,7 @@ public class firebaseHandler {
         reference = database.getReference(ref);
     }
 
-    public void changeReference(String ref){
+    public void changeReference(String ref) {
 
         reference = database.getReference(ref);
     }
@@ -81,60 +82,62 @@ public class firebaseHandler {
         // Create a new reference under the Restaurant hierarchy to write information such as Address and phone number.
         DatabaseReference topLevelRef = reference.child(getRestaurantName());
         Map<String, Object> menuMap = new HashMap<>();
-        menuMap.put("Menu",null);
+        menuMap.put("Menu", null);
         topLevelRef.updateChildren(menuMap);
         DatabaseReference topMenuRef = topLevelRef.child("Menu");
 
         Map<String, Object> midMenuMap = new HashMap<>();
-        midMenuMap.put("**Default Menu Item**",null);
+        midMenuMap.put("**Default Menu Item**", null);
         topMenuRef.updateChildren(midMenuMap);
         DatabaseReference midMenuRef = topMenuRef.child("**Default Menu Item**");
         Map<String, Object> lowMenuMap = new HashMap<>();
-        lowMenuMap.put("Image Path","https://TestURL.com/image.jpg");
-        lowMenuMap.put("Ingredients","Example Ingredient");
-        lowMenuMap.put("Name","Example Item");
-        lowMenuMap.put("Tastr ID","Example Tastr ID");
+        lowMenuMap.put("Image Path", "https://TestURL.com/image.jpg");
+        lowMenuMap.put("Ingredients", "Example Ingredient");
+        lowMenuMap.put("Name", "Example Item");
+        lowMenuMap.put("Tastr ID", "Example Tastr ID");
         midMenuRef.updateChildren(lowMenuMap);
 
 
         DatabaseReference locationRef = topLevelRef.child("Locations").child(getState());
 
         // Write new data to the database in the correct position.
-        topLevelRef.updateChildren(newItem.getRestaurauntMap(newItem));
+        topLevelRef.updateChildren(newItem.getRestaurantMap(newItem));
         Map<String, Object> locationMap = new HashMap<>();
-        locationMap.put(getCity(),newItem.getAddress());
+        locationMap.put(getCity(), newItem.getAddress());
         locationRef.updateChildren(locationMap);
 
 
     }// writeToTastrDatabase
-    
+
     // getters and setters for reading data from the database.
     ArrayList<String> readerList = new ArrayList<>();
-    void setReaderList(String input){
+
+    void setReaderList(String input) {
         readerList.add(input);
     }
-    
-    public ArrayList<String> getReaderList(){
+
+    public ArrayList<String> getReaderList() {
         return readerList;
     }
 
     boolean readerDone = false;
-    public boolean isReaderDone(){
+
+    public boolean isReaderDone() {
         return readerDone;
     }
 
-    public void setReaderDone(boolean input){
+    public void setReaderDone(boolean input) {
         readerDone = input;
     }
 
     public void readFromDatabase() {
 
-        reference.addChildEventListener(new ChildEventListener(){
+        reference.addChildEventListener(new ChildEventListener() {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Map<?,?> tempMap;
+                Map<?, ?> tempMap;
                 tempMap = (Map<?, ?>) dataSnapshot.getValue();
                 Iterator it = tempMap.entrySet().iterator();
-                while(it.hasNext()){
+                while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
                     setReaderList(pair.getValue().toString());
                     System.out.println(pair.getValue().toString());
@@ -176,16 +179,17 @@ public class firebaseHandler {
 
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     setReaderList(child.getKey().toString());
-                    System.out.println(child.getKey().toString());
                 }
                 setReaderDone(true);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
     }
+
     // If what you are looking for won't have any children (IE Image Path)
     public void readValueFromDatabase() {
 
@@ -193,16 +197,21 @@ public class firebaseHandler {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    setReaderList(dataSnapshot.getValue().toString());
+                setReaderList(dataSnapshot.getValue().toString());
 
                 setReaderDone(true);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
 
+    }
+
+    public void close() {
+        database.goOffline();
     }
 }//read from database
 

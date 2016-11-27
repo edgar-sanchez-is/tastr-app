@@ -13,21 +13,19 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.smileyface.tastr.R;
 import com.smileyface.tastr.Other.TastrItem;
+import com.smileyface.tastr.R;
+import com.smileyface.tastr.Utilities.ItemLoader;
 import com.smileyface.tastr.Utilities.downloadImageTask;
-import com.smileyface.tastr.Utilities.firebaseHandler;
 import com.smileyface.tastr.Utilities.locationHandler;
 import com.smileyface.tastr.Utilities.yelpDataExecutor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.lang.Thread.sleep;
 
@@ -35,60 +33,32 @@ import static java.lang.Thread.sleep;
 public class TouchActivity extends Activity {
     private String msg;
     private ImageView img;
+    private ProgressBar loadingIcon;
     private RelativeLayout.LayoutParams layoutParams;
     yelpDataExecutor yelp = new yelpDataExecutor();
     locationHandler curLoc = new locationHandler(this);
-    firebaseHandler firebase;
+
     private GoogleApiClient client;
+    private downloadImageTask imageLoader;
+    ItemLoader itemLoader;
+    TastrItem currentItem;
 
-
-    //tastrItem Queue
-    public ArrayList<TastrItem> itemQueue;
-
-
-    public ArrayList<String> imagePath = new ArrayList<>();
-    private ArrayList<String> menuItem = new ArrayList<>();
-    private ArrayList<String> restNames = new ArrayList<>();
-
-    public void setImagePath(String path) {
-        this.imagePath.add(path);
-    }
-    public void addMenuItem(String item){
-        menuItem.add(item);
-    }
-    public void addRes(ArrayList<String> list){
-        restNames = list;
-    }
-
-    //potential temporary list of items to ignore that have been yucked or previously liked
-    //public List<TastrItem> ignoreItemsIDs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //TODO: setup request tastr items from firebase
-        //int requestAmount = 15; trying not to hardcode 15 incase of modular request size in the future
-        //TODO: make "firebase" instantiation available in the scope of the touch module so that we can request and show items
-        //TODO: make a function that will return a list of TastrItems
-        //itemQueue = firebaseHandler.requestNewItems(requestAmount);
-
-        //load already liked items TODO: potential omitting list, do this after itemQueue is up and working
+        //TODO: potential omitting list, do this after itemQueue is up and working
+        //load already liked items
         //ignoreItems = loadLikes(); add to this list as food is yucked
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_touch);
-
-        // Connect to database and get Tastr Items
-        curLoc.askForlocation();
-        yelp.execute(curLoc.getCurrentLat(), curLoc.getCurrentLong());
-        dataLoader loader = new dataLoader();
-        loader.execute();
-
-
-        System.err.println("Executing Yelp Call");
+        // Connect to yelp and request a list of nearby restaurants
         img = (ImageView) findViewById(R.id.imageView);
+        loadingIcon = (ProgressBar) findViewById(R.id.imageLoadingBar);
+        loadingIcon.setVisibility(View.GONE);
+
         ImageView yum = (ImageView) findViewById(R.id.yum);
         ImageView yuck = (ImageView) findViewById(R.id.yuck);
-
 
 
         img.setOnDragListener(new View.OnDragListener() {
@@ -216,6 +186,7 @@ public class TouchActivity extends Activity {
 
         yuck.setOnDragListener(new View.OnDragListener() {
             int i = 0;
+
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 switch (event.getAction()) {
@@ -252,12 +223,7 @@ public class TouchActivity extends Activity {
                         if (dropEventNotHandled(event)) {
                             v.setVisibility(View.VISIBLE);
                         }
-
-                        if (i <imagePath.size()) {
-                            setNewImage(imagePath.get(i));
-                            i++;
-                        }else{i = 0;}
-
+                        showNextImage();
 
                         break;
 
@@ -301,10 +267,6 @@ public class TouchActivity extends Activity {
         return !dragEvent.getResult();
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private Action getIndexApiAction() {
         Thing object = new Thing.Builder()
                 .setName("Touch Page") // TODO: Define a title for the content shown.
@@ -320,7 +282,16 @@ public class TouchActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
+        curLoc.askForlocation();
+        yelp.execute(curLoc.getCurrentLat(), curLoc.getCurrentLong());
+        itemLoader = new ItemLoader(yelp);
+        itemLoader.execute();
+        loadingIcon = (ProgressBar) findViewById(R.id.imageLoadingBar);
+        // Instantiate background process, connect to firebase and fill the Tastr Item queue
 
+        // Wait for an item to be added before trying to load an image into the gui.
+        TastrSync sync = new TastrSync();
+        sync.execute();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
@@ -328,10 +299,16 @@ public class TouchActivity extends Activity {
 
     }
 
-    public void setNewImage(String url){
-        new downloadImageTask(img).execute(url);
-    }
+    public void showNextImage() {
+        currentItem = itemLoader.getNextItem();
+        Log.i("Touch Activity ", "Tastr Item Loaded From Queue ---> " + currentItem.getImagePath());
+        downloadImageTask imageLoader = new downloadImageTask(img);
+        if (currentItem.getImagePath().get(0) != null) {
+            imageLoader.execute(currentItem.getImagePath().get(0));
+            loadingIcon.setVisibility(View.GONE);
 
+        }
+    }
 
     @Override
     public void onStop() {
@@ -343,77 +320,29 @@ public class TouchActivity extends Activity {
         client.disconnect();
     }
 
-    private class dataLoader extends AsyncTask<String, Void, String> {
+    public void getCurrentTastrItem() {
 
+    }
 
-        boolean yelpLoaded = yelp.checkHasNewData();
-
-
-
-        boolean initialStartFlag = true;
-        // Everything you want to happen OUTSIDE of the GUI thread. IE this is a background process.
+    // wait for the first Tastr Item to be added
+    private class TastrSync extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... params) {
 
-            // add a local list of the restaurants found at yelp and a reference for the background thread to process.
-            addRes(yelp.getRestaurants());
-            // initialize firebase handler class
-
-
-            // Clay's Nasty Algorithm for retrieving data from firebase
-
-            // loop through each restaurant and add all the menu items from each one. I think we need to randomize this list later on to provide variety in the app.
-            for (int i = 0; i < restNames.size(); i++) {
-                firebase = new firebaseHandler("Tastr Items/" + restNames.get(i) + "/Menu"); //Change where in the database we want to search for information
-                System.err.println("Adding Menu From --> " + restNames.get(i));
-
-                firebase.readKeyFromDatabase(); // Search the database for any Menu items available and put them into a list
-
-                // Wait for firebase to finish adding new data
-                while (!firebase.isReaderDone()) {
-                    try {
-                        sleep(100); // wait 100 ms before checking again, saves cpu
-                    } catch (InterruptedException e) {
-                        e.printStackTrace(); // if there is a problem while sleeping, print out the errors encountered.
-                    }
-                }
-                int oldMenuSize = menuItem.size(); // prevents adding duplicate menu items
-                System.err.println("Menu Size So far ----->" + menuItem.size());
-                menuItem.addAll(firebase.getReaderList());
-
-                for (int k = oldMenuSize; k< menuItem.size(); k++){
-                    firebase = new firebaseHandler("Tastr Items/" + restNames.get(i) + "/Menu/" + menuItem.get(k) + "/Image Path");
-
-                    System.err.println("Tastr Items/" + restNames.get(i) + "/Menu/" + menuItem.get(k) + "/Image Path");
-
-                    firebase.readValueFromDatabase();
-                    // Wait for firebase to finish adding new data
-                    while (!firebase.isReaderDone()) {
-                    }
-                    System.err.println("Image Paths have been added ----> " + firebase.getReaderList().get(0));
-
-                    imagePath.addAll(firebase.getReaderList());
-
-                }
-
-
+            while (!itemLoader.checkIfReady()) try {
+                sleep(10); // wait 100 ms before checking again, saves cpu
+            } catch (InterruptedException e) {
+                e.printStackTrace(); // if there is a problem while sleeping, print out the errors encountered.
             }
+
 
             return null;
         }//doInBackground
 
         // Everything you want to happen AFTER the doInBackground function is executed. Use this method to make changes to the GUI.
         @Override
-        protected void onPostExecute(String result) {
-            if(initialStartFlag = true && !imagePath.isEmpty()) {
-                System.err.println("Trying to download image now ----> "+imagePath.get(0));
+        protected void onPostExecute(String results) {
+            showNextImage();
 
-                setNewImage(imagePath.get(0));
-                imagePath.remove(0);
-                initialStartFlag = false;
-
-            }
-
-        }//On Post Execute
-    }//loader class
-
+        }
+    }
 }

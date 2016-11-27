@@ -1,5 +1,8 @@
 package com.smileyface.tastr.Other;
 
+import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,52 +14,59 @@ import java.util.Map;
  **/
 public class TastrItem {
     //parameters
-    private static String tastrID;
-    private static String name;
-    private static String description;
-    private static String restaurant;
-    private static String rating;
-    private static String imagePath;
-    private static String imageID;
-    private static String address;
-    private static String phone;
-    private static String categories;
+    private String tastrID;
+    private String name;
+    private String description;
+
+
+    private String restaurant;
+    private String rating;
+    private String imageID;
+    private String address;
+    private String phone;
+    private String categories;
+    private ArrayList<String> menuItems = new ArrayList<String>();
+    private ArrayList<String> imagePath = new ArrayList<String>();
 
     // Getters and Setters for parameters
-    private static String getTastrID() {
+    private String getTastrID() {
         return tastrID;
     }
 
-    public static void setTastrID(String tastrID) {
-        TastrItem.tastrID = tastrID;
+    public void setTastrID(String tastrID) {
+        this.tastrID = tastrID;
     }
 
-    private static String getName() {
+    private String getName() {
         return name;
     }
 
-    public static void setName(String name) {
-        TastrItem.name = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    private static String getDescription() {
+    private String getDescription() {
         return description;
     }
 
-    public static void setDescription(String description) {
-        TastrItem.description = description;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    private static String getRestaurant() {
+    public String getRestaurant() {
         return restaurant;
     }
 
-    private static String getRating() {
+    public void setRestaurant(String restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    private String getRating() {
         return rating;
     }
 
-    public static void setRating(String rating) {
-        TastrItem.rating = rating;
+    public void setRating(String rating) {
+        this.rating = rating;
     }
 
     private String getPhone() {
@@ -67,26 +77,41 @@ public class TastrItem {
         return address;
     }
 
-    private String getCategories() {
+    public String getCategories() {
         return categories;
     }
 
-    private String getImagePath() {
+    public ArrayList<String> getImagePath() {
         return imagePath;
     }
 
-    public void setImagePath(String imagePath) {
-        TastrItem.imagePath = imagePath;
+    public void setImagePath(ArrayList<String> imageP) {
+        for (int i = 0; i < imageP.size(); i++) {
+            this.imagePath.add(imageP.get(i));
+            Log.i("Tastr Item ", "Added Image Path");
+        }
+
     }
 
-    private static String getImageID() {
+    public void setMenu(ArrayList<String> menu) {
+        for (int i = 0; i < menu.size(); i++) {
+            this.menuItems.add(menu.get(i));
+            Log.i("Class: TastrItem ", "Added Menu Item ---> " + menu.get(i));
+        }
+
+    }
+
+    public ArrayList<String> getMenu() {
+        return menuItems;
+    }
+
+    private String getImageID() {
         return imageID;
     }
 
-    public static void setImageID(String imageID) {
-        TastrItem.imageID = imageID;
+    public void setImageID(String imageID) {
+        this.imageID = imageID;
     }
-
 
     //constructors
     public TastrItem() {
@@ -94,26 +119,14 @@ public class TastrItem {
         name = "Unknown";
         description = "Unknown";
         rating = "Unknown";
-        imagePath = "Unknown";
         imageID = "Unknown";
         categories = "Unknown";
         phone = "unknown";
         address = "unknown";
     }
 
-    //convenience constructor
-    public TastrItem(String mTastrID, String mName, String mDescription, String mRestaurant, String mYelpID, String mRating, String mImagePath, String mImageID) {
-        tastrID = mTastrID;
-        name = mName;
-        description = mDescription;
-        restaurant = mRestaurant;
-        rating = mRating;
-        imagePath = mImagePath;
-        imageID = mImageID;
-    }
-
     //converts Tastr Item into a hash-map for database storage
-    public Map<String, Object> getRestaurauntMap(TastrItem newItem) {
+    public Map<String, Object> getRestaurantMap(TastrItem newItem) {
 
         Map<String, Object> tastrMap = new HashMap<>();
         tastrMap.put(" Rating", getRating());
@@ -129,27 +142,15 @@ public class TastrItem {
         return tastrMap;
     }
 
-    public Map<String, Object> getMenuMap(TastrItem newItem) {
-
-        Map<String, Object> tastrMap = new HashMap<>();
-        tastrMap.put("Name", "Unknown");
-        tastrMap.put("Ingredients: ", "Unknown");
-        tastrMap.put("Tastr ID", "Unknown");
-        tastrMap.put("Image Path", getImagePath());
-        tastrMap.put("Image ID", getImageID());
-
-        return tastrMap;
-    }
-
-   public void setAddress(String address) {
-        TastrItem.address = address;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public void setPhone(String phone) {
-        TastrItem.phone = phone;
+        this.phone = phone;
     }
 
     public void setCategories(String categories) {
-        TastrItem.categories = categories;
+        this.categories = categories;
     }
 }
