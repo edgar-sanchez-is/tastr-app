@@ -3,6 +3,7 @@ package com.smileyface.tastr.Utilities;
 import android.os.AsyncTask;
 import android.os.Process;
 
+import com.smileyface.tastr.Other.TastrItem;
 import com.smileyface.tastr.Yelp.YelpAPI;
 
 import java.util.ArrayList;
@@ -41,9 +42,25 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
 
 
     public ArrayList<String> getRestaurants() {
-
         return restaurants;
     }
+
+    public ArrayList<String> getAddress() {
+        return addresses;
+    }
+
+    public ArrayList<String> getStates() {
+        return states;
+    }
+
+    public ArrayList<String> getRatings() {
+        return ratings;
+    }
+
+    public ArrayList<String> getPhones() {
+        return phones;
+    }
+
     protected String doInBackground(String... params) {
         hasNewData = false;
         System.err.println("Waiting for GPS signal");
@@ -75,13 +92,13 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
         categories = YelpAPI.getCategoryList();
         phones = YelpAPI.getPhoneList();
         restaurants = YelpAPI.getNameList();
-/*
+
         firebaseHandler firebase = new firebaseHandler("Tastr Items");
         for (int i = 0; i < numberOfBusinesses; i++) {
 
             TastrItem newItem = new TastrItem();
             firebase.setRestaurantName(restaurants.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
-            TastrItem.setRating(ratings.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
+            newItem.setRating(ratings.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
             firebase.setCity(cities.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
             firebase.setState(states.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
             newItem.setCategories(categories.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
@@ -90,7 +107,7 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
             firebase.writeTastrToDatabase(newItem);
 
         }//for
-*/
+
         return null;
     }//doInBackground
 

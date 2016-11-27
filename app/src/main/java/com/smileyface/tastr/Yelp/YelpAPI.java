@@ -1,6 +1,8 @@
 package com.smileyface.tastr.Yelp;
 
 
+import android.util.Log;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
@@ -213,7 +215,7 @@ public class YelpAPI implements Runnable {
      * @return <tt>String</tt> body of API response
      */
     private String sendRequestAndGetResponse(OAuthRequest request) {
-        System.out.println("Querying " + request.getCompleteUrl() + " ...");
+        Log.i("Yelp API  ", "Querying " + request.getCompleteUrl() + " ...");
         this.service.signRequest(this.accessToken, request);
 
         Response response = request.send();
@@ -236,15 +238,12 @@ public class YelpAPI implements Runnable {
         try {
             response = (JSONObject) parser.parse(searchResponseJSON);
         } catch (ParseException pe) {
-            System.out.println("Error: could not parse JSON response:");
-            System.out.println(searchResponseJSON);
+            Log.i("Yelp API  ", "Error: could not parse JSON response:");
+            Log.i("Yelp API  ", searchResponseJSON);
             System.exit(1);
         }
 
         JSONArray businesses = (JSONArray) response.get("businesses");
-
-        JSONObject firstBusiness = (JSONObject) businesses.get(0);
-
 
         //Populates the business ID Array List with all of the business ID's found in the yelp search.
         // Important to clear the list first so only the most recent results are displayed.
@@ -266,18 +265,6 @@ public class YelpAPI implements Runnable {
             nameList.add(temp.get("name").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
 
         }
-
-
-        String firstBusinessID = firstBusiness.get("id").toString();
-        System.out.println(String.format("%s businesses found, querying business info for the top result \"%s\" ...",
-                businesses.size(), firstBusinessID));
-
-        // Select the first business and display business details
-        String businessResponseJSON = yelpApi.searchByBusinessId(firstBusinessID);
-        System.out.println(String.format("Result for business \"%s\" found:", firstBusinessID));
-        System.out.println(businessResponseJSON);
-
-
     }
 
 

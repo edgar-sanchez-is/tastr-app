@@ -26,12 +26,15 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
     }
 
     public TastrItem getNextItem() {
-        if (counter > itemList.size() && itemList.size() > 0) {
+        if (counter == 0 && !itemList.isEmpty()) {
+            counter++;
+            return itemList.get(0);
+        } else if (counter >= itemList.size() - 1 && !itemList.isEmpty()) {
             counter = 0;
             return itemList.get(0);
-        } else if (itemList.size() > 0) {
+        } else if (!itemList.isEmpty()) {
             counter++;
-            return itemList.get(counter - 1);
+            return itemList.get(counter);
         }
         Log.i("Item Loader ","Item List is null");
         return null; // no items in the list yet
@@ -50,7 +53,9 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
         for (int i = 0; i < yelp.getRestaurants().size(); i++) {
             TastrItem temp = new TastrItem();
             temp.setRestaurant(yelp.getRestaurants().get(i));
-
+            temp.setAddress(yelp.getAddress().get(i));
+            temp.setRating(yelp.getRatings().get(i));
+            temp.setPhone(yelp.getPhones().get(i));
             // loop through each restaurant and add all the menu items from each one. I think we need to randomize this list later on to provide variety in the app.
                 firebase = new firebaseHandler("Tastr Items/" + temp.getRestaurant() + "/Menu"); //Change where in the database we want to search for information.
                 firebase.readKeyFromDatabase(); // Search the database for any Menu items available at the specified restaurant and put them into a list.
@@ -82,7 +87,6 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
                     Log.i("Class: ItemLoader ", "Image path added:" + firebase.getReaderList());
 
                 }
-
             itemList.add(temp);
             ready = true;
         }

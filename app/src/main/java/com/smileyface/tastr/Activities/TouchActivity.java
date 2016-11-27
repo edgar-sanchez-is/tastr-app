@@ -13,7 +13,6 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.appindexing.Action;
@@ -33,7 +32,6 @@ import static java.lang.Thread.sleep;
 public class TouchActivity extends Activity {
     private String msg;
     private ImageView img;
-    private ProgressBar loadingIcon;
     private RelativeLayout.LayoutParams layoutParams;
     yelpDataExecutor yelp = new yelpDataExecutor();
     locationHandler curLoc = new locationHandler(this);
@@ -54,9 +52,6 @@ public class TouchActivity extends Activity {
         setContentView(R.layout.activity_touch);
         // Connect to yelp and request a list of nearby restaurants
         img = (ImageView) findViewById(R.id.imageView);
-        loadingIcon = (ProgressBar) findViewById(R.id.imageLoadingBar);
-        loadingIcon.setVisibility(View.GONE);
-
         ImageView yum = (ImageView) findViewById(R.id.yum);
         ImageView yuck = (ImageView) findViewById(R.id.yuck);
 
@@ -153,23 +148,17 @@ public class TouchActivity extends Activity {
                         if (dropEventNotHandled(event)) {
                             v.setVisibility(View.VISIBLE);
                         }
+                        CharSequence options[] = new CharSequence[]{currentItem.getMenu().get(0), currentItem.getAddress(), currentItem.getPhone()};
 
-                        new AlertDialog.Builder(TouchActivity.this)
-                                .setTitle("Collision Detected")
-                                .setMessage("Yum!")
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // continue with delete
-                                    }
-                                })
-                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                })
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-                        onCreate(null);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(TouchActivity.this);
+                        builder.setTitle(currentItem.getRestaurant());
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // add option to open address in google maps
+                            }
+                        });
+                        builder.show();
 
 
                         break;
@@ -197,7 +186,6 @@ public class TouchActivity extends Activity {
                         // Do nothing
                         return true;
 
-
                     case DragEvent.ACTION_DRAG_ENTERED:
                         Log.d(msg, "Action is DragEvent.ACTION_DRAG_ENTERED");
                         int x_cord = (int) event.getX();
@@ -218,12 +206,11 @@ public class TouchActivity extends Activity {
                         break;
 
                     case DragEvent.ACTION_DROP:
-
+                        showNextImage();
                         Log.d(msg, "Drag ended");
                         if (dropEventNotHandled(event)) {
                             v.setVisibility(View.VISIBLE);
                         }
-                        showNextImage();
 
                         break;
 
@@ -286,7 +273,7 @@ public class TouchActivity extends Activity {
         yelp.execute(curLoc.getCurrentLat(), curLoc.getCurrentLong());
         itemLoader = new ItemLoader(yelp);
         itemLoader.execute();
-        loadingIcon = (ProgressBar) findViewById(R.id.imageLoadingBar);
+
         // Instantiate background process, connect to firebase and fill the Tastr Item queue
 
         // Wait for an item to be added before trying to load an image into the gui.
@@ -296,17 +283,17 @@ public class TouchActivity extends Activity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
-
     }
 
     public void showNextImage() {
         currentItem = itemLoader.getNextItem();
-        Log.i("Touch Activity ", "Tastr Item Loaded From Queue ---> " + currentItem.getImagePath());
         downloadImageTask imageLoader = new downloadImageTask(img);
-        if (currentItem.getImagePath().get(0) != null) {
+        if (!currentItem.getImagePath().isEmpty()) {
+            Log.i("Touch Activity ", "Loading New Image ---> " + currentItem.getImagePath());
             imageLoader.execute(currentItem.getImagePath().get(0));
-            loadingIcon.setVisibility(View.GONE);
-
+        } else {
+            Log.i("Touch Activity ", "No valid URLS Found, retrieving next Tastr Item...");
+            showNextImage();
         }
     }
 
@@ -334,7 +321,6 @@ public class TouchActivity extends Activity {
                 e.printStackTrace(); // if there is a problem while sleeping, print out the errors encountered.
             }
 
-
             return null;
         }//doInBackground
 
@@ -342,7 +328,6 @@ public class TouchActivity extends Activity {
         @Override
         protected void onPostExecute(String results) {
             showNextImage();
-
         }
     }
 }

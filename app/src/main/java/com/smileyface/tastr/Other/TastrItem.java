@@ -14,22 +14,22 @@ import java.util.Map;
  **/
 public class TastrItem {
     //parameters
-    private String tastrID;
-    private String name;
-    private String description;
+    public String tastrID;
+    public String name;
+    public String description;
 
 
-    private String restaurant;
-    private String rating;
-    private String imageID;
-    private String address;
-    private String phone;
-    private String categories;
-    private ArrayList<String> menuItems = new ArrayList<String>();
-    private ArrayList<String> imagePath = new ArrayList<String>();
+    public String restaurant;
+    public String rating;
+    public String imageID;
+    public String address;
+    public String phone;
+    public String categories;
+    public ArrayList<String> menuItems = new ArrayList<String>();
+    public ArrayList<String> imagePath = new ArrayList<String>();
 
     // Getters and Setters for parameters
-    private String getTastrID() {
+    public String getTastrID() {
         return tastrID;
     }
 
@@ -37,7 +37,7 @@ public class TastrItem {
         this.tastrID = tastrID;
     }
 
-    private String getName() {
+    public String getName() {
         return name;
     }
 
@@ -45,7 +45,7 @@ public class TastrItem {
         this.name = name;
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return description;
     }
 
@@ -61,7 +61,7 @@ public class TastrItem {
         this.restaurant = restaurant;
     }
 
-    private String getRating() {
+    public String getRating() {
         return rating;
     }
 
@@ -69,7 +69,7 @@ public class TastrItem {
         this.rating = rating;
     }
 
-    private String getPhone() {
+    public String getPhone() {
         return phone;
     }
 
@@ -105,7 +105,7 @@ public class TastrItem {
         return menuItems;
     }
 
-    private String getImageID() {
+    public String getImageID() {
         return imageID;
     }
 
