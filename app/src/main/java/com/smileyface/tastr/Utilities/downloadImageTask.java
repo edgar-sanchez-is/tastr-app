@@ -17,6 +17,7 @@ public class downloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
         public downloadImageTask(ImageView bmImage) {
         this.tempImage = bmImage;
+                tempImage.setScaleType(ImageView.ScaleType.FIT_XY);
 
         }
 

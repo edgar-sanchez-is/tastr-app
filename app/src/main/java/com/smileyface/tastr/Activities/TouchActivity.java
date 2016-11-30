@@ -51,7 +51,8 @@ public class TouchActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_touch);
         // Connect to yelp and request a list of nearby restaurants
-        img = (ImageView) findViewById(R.id.imageView);
+        img = (ImageView) findViewById(R.id.img);
+        img.setScaleType(ImageView.ScaleType.FIT_XY);
         ImageView yum = (ImageView) findViewById(R.id.yum);
         ImageView yuck = (ImageView) findViewById(R.id.yuck);
 
@@ -285,6 +286,7 @@ public class TouchActivity extends Activity {
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
+    int loadingError = 0;
     public void showNextImage() {
         currentItem = itemLoader.getNextItem();
         downloadImageTask imageLoader = new downloadImageTask(img);
@@ -292,8 +294,14 @@ public class TouchActivity extends Activity {
             Log.i("Touch Activity ", "Loading New Image ---> " + currentItem.getImagePath());
             imageLoader.execute(currentItem.getImagePath().get(0));
         } else {
-            Log.i("Touch Activity ", "No valid URLS Found, retrieving next Tastr Item...");
-            showNextImage();
+            loadingError++;
+            if (loadingError < 50) {
+                Log.i("Touch Activity ", "No valid URLS Found, retrieving next Tastr Item...");
+                showNextImage();
+            }else{
+                Log.i("Touch Activity ","Can't find any images to download, exiting....");
+                System.exit(1);
+            }
         }
     }
 
@@ -316,7 +324,7 @@ public class TouchActivity extends Activity {
         protected String doInBackground(String... params) {
 
             while (!itemLoader.checkIfReady()) try {
-                sleep(10); // wait 100 ms before checking again, saves cpu
+                sleep(100); // wait 100 ms before checking again, saves cpu
             } catch (InterruptedException e) {
                 e.printStackTrace(); // if there is a problem while sleeping, print out the errors encountered.
             }

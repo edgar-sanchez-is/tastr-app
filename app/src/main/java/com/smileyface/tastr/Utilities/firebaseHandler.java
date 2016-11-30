@@ -91,13 +91,11 @@ public class firebaseHandler {
         topMenuRef.updateChildren(midMenuMap);
         DatabaseReference midMenuRef = topMenuRef.child("Default Menu Item");
         Map<String, Object> lowMenuMap = new HashMap<>();
-        lowMenuMap.put("Image Path", "https://firebasestorage.googleapis.com/v0/b/unt-team-project.appspot.com/o/not%20found%20error.png?alt=media&token=5a8562d6-62db-4575-a644-578b88a31113");
+        lowMenuMap.put("Image Path", "https://firebasestorage.googleapis.com/v0/b/unt-team-project.appspot.com/o/download.jpg?alt=media&token=c1a4bae0-6fb1-487a-b6c5-c9293eb311d1");
         lowMenuMap.put("Ingredients", "Example Ingredient");
         lowMenuMap.put("Name", "Example Item");
         lowMenuMap.put("Tastr ID", "Example Tastr ID");
         midMenuRef.updateChildren(lowMenuMap);
-
-
         DatabaseReference locationRef = topLevelRef.child("Locations").child(getState());
 
         // Write new data to the database in the correct position.

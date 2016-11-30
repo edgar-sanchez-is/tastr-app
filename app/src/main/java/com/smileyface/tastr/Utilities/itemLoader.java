@@ -73,7 +73,7 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
                 for (int k = 0; k < temp.getMenu().size(); k++) {
 
                     firebase = new firebaseHandler("Tastr Items/" + temp.getRestaurant() + "/Menu/" + temp.getMenu().get(k) + "/Image Path");
-
+                    Log.i("Item Loader", "Reference added: Tastr Items/" + temp.getRestaurant() + "/Menu/" + temp.getMenu().get(k) + "/Image Path" );
                     firebase.readValueFromDatabase();
                     // Wait for firebase to finish adding new data
                     while (!firebase.isReaderDone()) {
@@ -84,7 +84,7 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
                         }
                     }
                     temp.setImagePath(firebase.getReaderList());
-                    Log.i("Class: ItemLoader ", "Image path added:" + firebase.getReaderList());
+                    Log.i("Item Loader ", "Image path added:" + firebase.getReaderList());
 
                 }
             itemList.add(temp);

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class YelpAPI implements Runnable {
 
     private static String DEFAULT_TERM = "restaurants near me";
-    private static final String DEFAULT_LOCATION = "Houston,Texas";
+    private static final String DEFAULT_LOCATION = "Denton,Texas";
     // this CAN NOT be raised over 20. App will crash if it is.
     private static int SEARCH_LIMIT = 20;
 
