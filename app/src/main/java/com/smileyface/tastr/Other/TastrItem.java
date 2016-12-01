@@ -25,7 +25,7 @@ public class TastrItem {
     public String address;
     public String phone;
     public String categories;
-    public ArrayList<String> menuItems = new ArrayList<String>();
+    public ArrayList<MenuItem> menu = new ArrayList<MenuItem>();
     public ArrayList<String> imagePath = new ArrayList<String>();
 
     // Getters and Setters for parameters
@@ -93,16 +93,12 @@ public class TastrItem {
 
     }
 
-    public void setMenu(ArrayList<String> menu) {
-        for (int i = 0; i < menu.size(); i++) {
-            this.menuItems.add(menu.get(i));
-            Log.i("Class: TastrItem ", "Added Menu Item ---> " + menu.get(i));
-        }
-
+    public void setMenu(ArrayList<MenuItem> menu) {
+        this.menu = menu;
     }
 
-    public ArrayList<String> getMenu() {
-        return menuItems;
+    public ArrayList<MenuItem> getMenu() {
+        return menu;
     }
 
     public String getImageID() {
@@ -115,32 +111,9 @@ public class TastrItem {
 
     //constructors
     public TastrItem() {
-        tastrID = "Unknown";
-        name = "Unknown";
-        description = "Unknown";
-        rating = "Unknown";
-        imageID = "Unknown";
-        categories = "Unknown";
-        phone = "unknown";
-        address = "unknown";
     }
 
-    //converts Tastr Item into a hash-map for database storage
-    public Map<String, Object> getRestaurantMap(TastrItem newItem) {
 
-        Map<String, Object> tastrMap = new HashMap<>();
-        tastrMap.put(" Rating", getRating());
-        tastrMap.put(" Category", newItem.getCategories());
-
-        return tastrMap;
-    }
-
-    public Map<String, Object> getlocationMap(TastrItem newItem) {
-
-        Map<String, Object> tastrMap = new HashMap<>();
-        tastrMap.put("", getTastrID());
-        return tastrMap;
-    }
 
     public void setAddress(String address) {
         this.address = address;
@@ -152,5 +125,9 @@ public class TastrItem {
 
     public void setCategories(String categories) {
         this.categories = categories;
+    }
+
+    public void addImagePath(String s) {
+        this.imagePath.add(s);
     }
 }

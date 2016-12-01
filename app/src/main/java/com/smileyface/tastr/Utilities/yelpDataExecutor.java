@@ -3,6 +3,7 @@ package com.smileyface.tastr.Utilities;
 import android.os.AsyncTask;
 import android.os.Process;
 
+import com.smileyface.tastr.Other.MenuItem;
 import com.smileyface.tastr.Other.TastrItem;
 import com.smileyface.tastr.Yelp.YelpAPI;
 
@@ -32,7 +33,7 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
     ArrayList<String> categories = new ArrayList<>();
     ArrayList<String> phones = new ArrayList<>();
     ArrayList<String> restaurants = new ArrayList<>();
-
+    ArrayList<MenuItem> emptyMenu = new ArrayList<>();
     /**
     *Everything you want to happen OUTSIDE of the GUI thread.
     *params in order of use:
@@ -60,6 +61,7 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
     public ArrayList<String> getPhones() {
         return phones;
     }
+
 
     protected String doInBackground(String... params) {
         hasNewData = false;
@@ -92,19 +94,19 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
         categories = YelpAPI.getCategoryList();
         phones = YelpAPI.getPhoneList();
         restaurants = YelpAPI.getNameList();
+        emptyMenu.add(new MenuItem());
 
         firebaseHandler firebase = new firebaseHandler("Tastr Items");
         for (int i = 0; i < numberOfBusinesses; i++) {
 
             TastrItem newItem = new TastrItem();
-            firebase.setRestaurantName(restaurants.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
-            newItem.setRating(ratings.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
-            firebase.setCity(cities.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
-            firebase.setState(states.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
+            newItem.setRating(ratings.get(i));
             newItem.setCategories(categories.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
             newItem.setPhone(phones.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
             newItem.setAddress(addresses.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
-            firebase.writeTastrToDatabase(newItem);
+            newItem.setName(restaurants.get(i));
+            newItem.setMenu(emptyMenu);
+            firebase.writeTastrToDatabase(restaurants.get(i), newItem);
 
         }//for
 

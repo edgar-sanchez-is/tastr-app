@@ -1,5 +1,7 @@
 package com.smileyface.tastr.Utilities;
 
+import android.util.Log;
+
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -13,7 +15,10 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 
 //TODO: move yelp api to the firebase handler becuase it should only be used when new items are requested
@@ -73,8 +78,11 @@ public class firebaseHandler {
 
     // Method Specifically for writing a new TastrItem to the database.
     // This includes a default menu item, since we are currently doing manual entry for menu items. 
-    public void writeTastrToDatabase(TastrItem newItem) {
-
+    public void writeTastrToDatabase(String name, TastrItem newItem) {
+        Map<String, Object> ID = new HashMap<>();
+        ID.put(name, newItem);
+        reference.updateChildren(ID);
+        /*
         final Map<String, Object> ID = new HashMap<>();
         ID.put("", restaurantName);
         reference.updateChildren(ID);
@@ -89,12 +97,10 @@ public class firebaseHandler {
         Map<String, Object> midMenuMap = new HashMap<>();
         midMenuMap.put("**Default Menu Item**", null);
         topMenuRef.updateChildren(midMenuMap);
-        DatabaseReference midMenuRef = topMenuRef.child("Default Menu Item");
+        DatabaseReference midMenuRef = topMenuRef.child("MenuItem");
         Map<String, Object> lowMenuMap = new HashMap<>();
-        lowMenuMap.put("Image Path", "https://firebasestorage.googleapis.com/v0/b/unt-team-project.appspot.com/o/download.jpg?alt=media&token=c1a4bae0-6fb1-487a-b6c5-c9293eb311d1");
+        lowMenuMap.put("ImagePath", "https://firebasestorage.googleapis.com/v0/b/unt-team-project.appspot.com/o/download.jpg?alt=media&token=c1a4bae0-6fb1-487a-b6c5-c9293eb311d1");
         lowMenuMap.put("Ingredients", "Example Ingredient");
-        lowMenuMap.put("Name", "Example Item");
-        lowMenuMap.put("Tastr ID", "Example Tastr ID");
         midMenuRef.updateChildren(lowMenuMap);
         DatabaseReference locationRef = topLevelRef.child("Locations").child(getState());
 
@@ -103,8 +109,7 @@ public class firebaseHandler {
         Map<String, Object> locationMap = new HashMap<>();
         locationMap.put(getCity(), newItem.getAddress());
         locationRef.updateChildren(locationMap);
-
-
+        */
     }// writeToTastrDatabase
 
     // getters and setters for reading data from the database.
@@ -168,36 +173,44 @@ public class firebaseHandler {
 
     }
 
+    TastrItem tempItem;
+
+    public TastrItem getTastrItem() {
+        return tempItem;
+    }
     // Use this if what you are looking for has children. (IE Menu)
     public void readKeyFromDatabase() {
+        readerDone = false;
+        readerList.clear();
+        tempItem = new TastrItem();
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
 
-        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    setReaderList(child.getKey().toString());
-                }
-                setReaderDone(true);
+                readerList.add(dataSnapshot.getKey());
+                tempItem = dataSnapshot.getValue(TastrItem.class);
+                readerDone = true;
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Log.i("Firebase Handler", "Made it here");
 
             }
         });
+
+        Log.w("Firebase Handler", "Returning " + tempItem.getName());
     }
 
     // If what you are looking for won't have any children (IE Image Path)
-    public void readValueFromDatabase() {
-
+    public String readValueFromDatabase() {
+        readerList.clear();
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                setReaderList(dataSnapshot.getValue().toString());
-
-                setReaderDone(true);
+                readerList.add(dataSnapshot.getValue().toString());
             }
 
             @Override
@@ -205,7 +218,7 @@ public class firebaseHandler {
 
             }
         });
-
+        return readerList.get(0);
     }
 
     public void close() {

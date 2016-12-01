@@ -37,7 +37,8 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
             return itemList.get(counter);
         }
         Log.i("Item Loader ","Item List is null");
-        return null; // no items in the list yet
+        return null; // no items in the list
+        // test
     }
 
     public boolean checkIfReady() {
@@ -51,45 +52,36 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         // Add all the Tastr Items to the Array list using the list of restaurants found by yelp.
         for (int i = 0; i < yelp.getRestaurants().size(); i++) {
-            TastrItem temp = new TastrItem();
-            temp.setRestaurant(yelp.getRestaurants().get(i));
-            temp.setAddress(yelp.getAddress().get(i));
-            temp.setRating(yelp.getRatings().get(i));
-            temp.setPhone(yelp.getPhones().get(i));
+
+            TastrItem temp;
             // loop through each restaurant and add all the menu items from each one. I think we need to randomize this list later on to provide variety in the app.
-                firebase = new firebaseHandler("Tastr Items/" + temp.getRestaurant() + "/Menu"); //Change where in the database we want to search for information.
-                firebase.readKeyFromDatabase(); // Search the database for any Menu items available at the specified restaurant and put them into a list.
+            firebase = new firebaseHandler("Tastr Items/" + yelp.getRestaurants().get(i)); //Change where in the database we want to search for information.
+            firebase.readKeyFromDatabase();
+            while (!firebase.isReaderDone()) {
 
-                // Wait for firebase to finish adding new data
-                while (!firebase.isReaderDone()) {
-                    try {
-                        sleep(10); // wait 10 ms before checking again, saves cpu
-                    } catch (InterruptedException e) {
-                        e.printStackTrace(); // if there is a problem while sleeping, print out the errors encountered.
-                    }
                 }
-                temp.setMenu(firebase.getReaderList());
+            temp = firebase.getTastrItem();
+            itemList.add(temp);
+            /*
+                Log.i("Item Loader", "Checking for Menu at:  Tastr Items/" + temp.getRestaurant() + "/Menu/");
+                TastrItem temp1 = new TastrItem();
+                temp1 = firebase.readKeyFromDatabase();
+                while(!firebase.isReaderDone()) {
+                }
 
+                temp.setImagePath(temp1.getImagePath());
+                //temp.setMenu(firebase.getReaderList());
                 for (int k = 0; k < temp.getMenu().size(); k++) {
 
                     firebase = new firebaseHandler("Tastr Items/" + temp.getRestaurant() + "/Menu/" + temp.getMenu().get(k) + "/Image Path");
                     Log.i("Item Loader", "Reference added: Tastr Items/" + temp.getRestaurant() + "/Menu/" + temp.getMenu().get(k) + "/Image Path" );
-                    firebase.readValueFromDatabase();
-                    // Wait for firebase to finish adding new data
-                    while (!firebase.isReaderDone()) {
-                        try {
-                            sleep(10); // wait 50 ms before checking again, saves cpu
-                        } catch (InterruptedException e) {
-                            e.printStackTrace(); // if there is a problem while sleeping, print out the errors encountered.
-                        }
-                    }
-                    temp.setImagePath(firebase.getReaderList());
-                    Log.i("Item Loader ", "Image path added:" + firebase.getReaderList());
-
+                    temp.addImagePath(firebase.readValueFromDatabase());
                 }
             itemList.add(temp);
-            ready = true;
+
+            */
         }
+        ready = true;
         return null;
     }//doInBackground
 
@@ -97,7 +89,6 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String results) {
         Log.i("Item Loader ","Finished Database Operations, closing firebase connection...");
-        firebase.close();
         ready = true;
     }//On Post Execute
 }//loader class

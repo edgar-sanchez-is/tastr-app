@@ -149,10 +149,10 @@ public class TouchActivity extends Activity {
                         if (dropEventNotHandled(event)) {
                             v.setVisibility(View.VISIBLE);
                         }
-                        CharSequence options[] = new CharSequence[]{currentItem.getMenu().get(0), currentItem.getAddress(), currentItem.getPhone()};
+                        CharSequence options[] = new CharSequence[]{currentItem.getMenu().get(itemCount).getName(), currentItem.getAddress(), currentItem.getPhone()};
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(TouchActivity.this);
-                        builder.setTitle(currentItem.getRestaurant());
+                        builder.setTitle(currentItem.getName());
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -286,24 +286,27 @@ public class TouchActivity extends Activity {
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
+    int itemCount = 0;
     int loadingError = 0;
-    public void showNextImage() {
+
+    public void getNextRestaurant() {
         currentItem = itemLoader.getNextItem();
+        itemCount = currentItem.getMenu().size() - 1;
+        showNextImage();
+    }
+
+    public void showNextImage() {
         downloadImageTask imageLoader = new downloadImageTask(img);
-        if (!currentItem.getImagePath().isEmpty()) {
-            Log.i("Touch Activity ", "Loading New Image ---> " + currentItem.getImagePath());
-            imageLoader.execute(currentItem.getImagePath().get(0));
+        if (!currentItem.getMenu().isEmpty() && currentItem.getMenu().size() > itemCount) {
+            Log.i("Touch Activity ", "Loading New Image ---> " + currentItem.getMenu().get(itemCount).getImagePath());
+            imageLoader.execute(currentItem.getMenu().get(itemCount).getImagePath());
+            itemCount++;
         } else {
-            loadingError++;
-            if (loadingError < 50) {
-                Log.i("Touch Activity ", "No valid URLS Found, retrieving next Tastr Item...");
-                showNextImage();
-            }else{
-                Log.i("Touch Activity ","Can't find any images to download, exiting....");
-                System.exit(1);
+            Log.i("Touch Activity ", "Can't find any images to download, loading next restaurant... ");
+            getNextRestaurant();
             }
         }
-    }
+
 
     @Override
     public void onStop() {
@@ -335,7 +338,7 @@ public class TouchActivity extends Activity {
         // Everything you want to happen AFTER the doInBackground function is executed. Use this method to make changes to the GUI.
         @Override
         protected void onPostExecute(String results) {
-            showNextImage();
+            getNextRestaurant();
         }
     }
 }
