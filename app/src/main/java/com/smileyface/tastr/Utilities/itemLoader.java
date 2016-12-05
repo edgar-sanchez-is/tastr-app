@@ -58,28 +58,12 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
             while (!firebase.isReaderDone()) {
 
                 }
-            if (firebase.getTastrItem()!=null) {
-                temp = firebase.getTastrItem();
-                itemList.add(temp);
+            if (firebase.getTastrItem() != null) {
+                if (firebase.getTastrItem().getMenu().get(0).getImagePath() != "Unknown") {
+                    temp = firebase.getTastrItem();
+                    itemList.add(temp);
+                }
             }
-            /*
-                Log.i("Item Loader", "Checking for Menu at:  Tastr Items/" + temp.getRestaurant() + "/Menu/");
-                TastrItem temp1 = new TastrItem();
-                temp1 = firebase.readKeyFromDatabase();
-                while(!firebase.isReaderDone()) {
-                }
-
-                temp.setImagePath(temp1.getImagePath());
-                //temp.setMenu(firebase.getReaderList());
-                for (int k = 0; k < temp.getMenu().size(); k++) {
-
-                    firebase = new FirebaseHandler("Tastr Items/" + temp.getRestaurant() + "/Menu/" + temp.getMenu().get(k) + "/Image Path");
-                    Log.i("Item Loader", "Reference added: Tastr Items/" + temp.getRestaurant() + "/Menu/" + temp.getMenu().get(k) + "/Image Path" );
-                    temp.addImagePath(firebase.readValueFromDatabase());
-                }
-            itemList.add(temp);
-
-            */
         }
         ready = true;
         return null;

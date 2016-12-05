@@ -106,8 +106,9 @@ public class YelpDataExecutor extends AsyncTask<String, Void, String> {
             newItem.setAddress(addresses.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
             newItem.setName(restaurants.get(i));
             newItem.setMenu(emptyMenu);
+            newItem.setCity(cities.get(i));
             // only enable this if you want to risk overwritin data in firebase.
-            // firebase.writeTastrToDatabase(restaurants.get(i), newItem);
+            //firebase.writeTastrToDatabase(restaurants.get(i), newItem);
 
         }//for
 

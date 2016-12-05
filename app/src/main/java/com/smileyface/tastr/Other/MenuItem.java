@@ -32,7 +32,7 @@ public class MenuItem {
 
     public MenuItem() {
         // defaults the image to a 404 image for debugging
-        imagePath = "https://firebasestorage.googleapis.com/v0/b/unt-team-project.appspot.com/o/not%20found%20error.png?alt=media&token=faf7a4a4-08ce-418a-bf84-697f88ba4213";
+        imagePath = "https://firebasestorage.googleapis.com/v0/b/unt-team-project.appspot.com/o/download.jpg?alt=media&token=c1a4bae0-6fb1-487a-b6c5-c9293eb311d1";
         ingredients = "Unknown";
         name = "Unknown";
     }

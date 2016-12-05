@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -66,7 +65,8 @@ public class TouchActivity extends Activity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
-
+        loadSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
+        loadSpinner.setVisibility(View.VISIBLE);
     }
 
     public void setDragProps(ImageView image, ImageView green, ImageView red) {
@@ -93,11 +93,12 @@ public class TouchActivity extends Activity {
 
                         // create a google maps buffer in case the user wants to go to the restaurant found.
                         final Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW,
-                                Uri.parse("google.navigation:q=an+" + currentItem.getAddress()));
+                                Uri.parse("google.navigation:q=+" + currentItem.getAddress()));
 
                         // create an internet link buffer in case they want to read the reviews on yelp
-                        Intent webIntent = new Intent(Intent.ACTION_VIEW);
-                        webIntent.setData(Uri.parse("https://www.yelp.com/biz/" + currentItem.getName() + "-" + currentItem.getCity()));
+                        final Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                        // experimental url, might not always work, we can just set it to do a google search for the restaurant or something if needed.
+                        webIntent.setData(Uri.parse("http://www.google.com/#q=" + currentItem.getName() + "," + currentItem.getCity()));
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(TouchActivity.this);
                         builder.setTitle(currentItem.getName());
@@ -113,8 +114,7 @@ public class TouchActivity extends Activity {
                                         call.makePhoneCall();
                                         break;
                                     case 3:
-                                        break;
-                                    case 4:
+                                        startActivity(webIntent);
                                         break;
                                 }
                             }
@@ -159,9 +159,6 @@ public class TouchActivity extends Activity {
                         Log.i("Touch Listener", "Action down triggered");
                         ClipData data = ClipData.newPlainText("", "");
                         View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            v.startDragAndDrop(data, shadowBuilder, v, 100);
-                        } else //noinspection deprecation,deprecation,deprecation
                             v.startDrag(data, shadowBuilder, v, 0);
                     default:
                         Log.i("Touch Listener", "default triggered");
@@ -204,22 +201,24 @@ public class TouchActivity extends Activity {
 
     public void getNextRestaurant() {
         itemCounter = 0;
-        currentItem = itemLoader.getNextItem();
-        totalItems = currentItem.getMenu().size() - 1;
-        showNextImage();
+        if (itemLoader.getNextItem() != null) {
+            currentItem = itemLoader.getNextItem();
+            totalItems = currentItem.getMenu().size() - 1;
+            showNextImage();
+        }
     }
 
     public void showNextImage() {
         ImageView yum = (ImageView) findViewById(R.id.yum);
         ImageView yuck = (ImageView) findViewById(R.id.yuck);
         ImageView img = (ImageView) findViewById(R.id.img);
+        ImageView stn = (ImageView) findViewById(R.id.settingsImg);
+        stn.setVisibility(View.VISIBLE);
 
         setDragProps(img, yum, yuck);
-        loadSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
-        loadSpinner.setVisibility(View.VISIBLE);
-
 
         //DownloadImageTask imageLoader = new DownloadImageTask(img);
+        // if (currentItem != null) {
         if (!currentItem.getMenu().isEmpty() && currentItem.getMenu().size() > itemCounter) {
             Picasso.with(this).load(currentItem.getMenu().get(itemCounter).getImagePath()).into(img);
             img.getLayoutParams().height = minHeight;
@@ -227,14 +226,13 @@ public class TouchActivity extends Activity {
             img.setVisibility(View.VISIBLE);
             loadSpinner.setVisibility(View.GONE);
             Log.i("Touch Activity ", "Loading New Image ---> " + currentItem.getMenu().get(itemCounter).getImagePath() + " From " + currentItem.getName());
-
             itemCounter++;
 
         } else {
             Log.i("Touch Activity ", "Can't find any more images to download from " + currentItem.getName() + ". Loading next restaurant... ");
             getNextRestaurant();
         }
-    }
+        }
 
     @Override
     public void onStop() {
