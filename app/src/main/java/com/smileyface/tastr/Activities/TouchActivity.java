@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -24,7 +23,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.smileyface.tastr.Other.TastrItem;
 import com.smileyface.tastr.R;
 import com.smileyface.tastr.Utilities.CallHandler;
-import com.smileyface.tastr.Utilities.DownloadImageTask;
 import com.smileyface.tastr.Utilities.ItemLoader;
 import com.smileyface.tastr.Utilities.LocationHandler;
 import com.smileyface.tastr.Utilities.YelpDataExecutor;
@@ -34,9 +32,9 @@ import static java.lang.Thread.sleep;
 
 
 public class TouchActivity extends Activity {
-    private String msg;
+    private String msg = "Drag Listener";
     private ProgressBar loadSpinner;
-    private RelativeLayout.LayoutParams layoutParams;
+    //private RelativeLayout.LayoutParams layoutParams;
     final static private int minHeight = 500;
     final static private int minWidth = 600;
     YelpDataExecutor yelp = new YelpDataExecutor();
@@ -44,7 +42,7 @@ public class TouchActivity extends Activity {
 
 
     private GoogleApiClient client;
-    private DownloadImageTask imageLoader;
+    //private DownloadImageTask imageLoader;
     ItemLoader itemLoader;
     TastrItem currentItem;
 
@@ -54,6 +52,20 @@ public class TouchActivity extends Activity {
         setContentView(R.layout.activity_touch);
         loadSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        curLoc.askForlocation();
+        yelp.execute(curLoc.getCurrentLat(), curLoc.getCurrentLong());
+        itemLoader = new ItemLoader(yelp);
+        itemLoader.execute();
+
+        // Instantiate background process, connect to firebase and fill the Tastr Item queue
+
+        // Wait for an item to be added before trying to load an image into the gui.
+        TastrSync sync = new TastrSync();
+        sync.execute();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
 
     }
 
@@ -125,7 +137,6 @@ public class TouchActivity extends Activity {
                     case DragEvent.ACTION_DROP:
                         showNextImage();
                         v.setVisibility(View.VISIBLE);
-                        onCreate(null);
                         Log.d(msg, "Drag ended");
                         if (dropEventNotHandled(event)) {
                             v.setVisibility(View.VISIBLE);
@@ -172,9 +183,9 @@ public class TouchActivity extends Activity {
 
     private Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("Touch Page") // TODO: Define a title for the content shown.
+                .setName("Touch Activity") // TODO: Define a title for the content shown.
                 // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .setUrl(Uri.parse("https://console.firebase.google.com/project/unt-team-project/overview"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)
                 .setObject(object)
@@ -185,20 +196,6 @@ public class TouchActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-        curLoc.askForlocation();
-        yelp.execute(curLoc.getCurrentLat(), curLoc.getCurrentLong());
-        itemLoader = new ItemLoader(yelp);
-        itemLoader.execute();
-
-        // Instantiate background process, connect to firebase and fill the Tastr Item queue
-
-        // Wait for an item to be added before trying to load an image into the gui.
-        TastrSync sync = new TastrSync();
-        sync.execute();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
     int totalItems = 0;
@@ -247,6 +244,11 @@ public class TouchActivity extends Activity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     public void getCurrentTastrItem() {
