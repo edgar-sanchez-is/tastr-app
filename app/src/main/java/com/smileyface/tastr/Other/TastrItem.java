@@ -3,8 +3,6 @@ package com.smileyface.tastr.Other;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * class: public class TastrItem
@@ -25,17 +23,11 @@ public class TastrItem {
     public String address;
     public String phone;
     public String categories;
+    public String city;
     public ArrayList<MenuItem> menu = new ArrayList<MenuItem>();
     public ArrayList<String> imagePath = new ArrayList<String>();
 
     // Getters and Setters for parameters
-    public String getTastrID() {
-        return tastrID;
-    }
-
-    public void setTastrID(String tastrID) {
-        this.tastrID = tastrID;
-    }
 
     public String getName() {
         return name;
@@ -45,13 +37,6 @@ public class TastrItem {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String getRestaurant() {
         return restaurant;
@@ -129,5 +114,13 @@ public class TastrItem {
 
     public void addImagePath(String s) {
         this.imagePath.add(s);
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

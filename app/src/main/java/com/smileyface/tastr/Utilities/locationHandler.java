@@ -24,7 +24,7 @@ import static java.lang.String.valueOf;
  * Created by Remixt on 10/23/2016.
  */
 
-public class locationHandler implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class LocationHandler implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     // for defining which activity class is asking for the devices location.
     Activity activity;
@@ -41,8 +41,8 @@ public class locationHandler implements GoogleApiClient.ConnectionCallbacks, Goo
     private String currentLat = null;
     private String currentLong = null;
 
-    // Constructor, requires activity input. If you are performing this operation from within the activity then simply call new locationHandler(this);
-    public locationHandler(Activity activity){
+    // Constructor, requires activity input. If you are performing this operation from within the activity then simply call new LocationHandler(this);
+    public LocationHandler(Activity activity) {
         this.activity = activity;
     }
 

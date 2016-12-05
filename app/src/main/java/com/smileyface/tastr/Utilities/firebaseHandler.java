@@ -15,14 +15,11 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 
 //TODO: move yelp api to the firebase handler becuase it should only be used when new items are requested
-public class firebaseHandler {
+public class FirebaseHandler {
     private DatabaseReference reference;
     JSONObject temp;
     // These strings represent "children" of the firebase, which is how things will be sorted. Example Under the data type TastrItems - > State - > City -> Restaurant -> Here you will find a list of food items under that particular restaurant.
@@ -66,7 +63,7 @@ public class firebaseHandler {
     }
 
     //constructor requires database reference string. IE "message" or "TastrItem" Basically it names the category in which to search for in the database.
-    public firebaseHandler(String ref) {
+    public FirebaseHandler(String ref) {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference(ref);
     }
@@ -183,6 +180,7 @@ public class firebaseHandler {
         readerDone = false;
         readerList.clear();
         tempItem = new TastrItem();
+        Log.v("Firebase Handler", "Checking database at: " + reference);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -191,7 +189,8 @@ public class firebaseHandler {
                 readerList.add(dataSnapshot.getKey());
                 tempItem = dataSnapshot.getValue(TastrItem.class);
                 readerDone = true;
-
+                // lets you know if the database found the item you were looking for, will say "returning null" if nothing was found.
+                Log.w("Firebase Handler", "Returning " + tempItem.getName());
             }
 
             @Override
@@ -201,7 +200,6 @@ public class firebaseHandler {
             }
         });
 
-        Log.w("Firebase Handler", "Returning " + tempItem.getName());
     }
 
     // If what you are looking for won't have any children (IE Image Path)

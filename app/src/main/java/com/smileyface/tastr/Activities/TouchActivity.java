@@ -3,6 +3,7 @@ package com.smileyface.tastr.Activities;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -13,6 +14,7 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.appindexing.Action;
@@ -21,234 +23,147 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.smileyface.tastr.Other.TastrItem;
 import com.smileyface.tastr.R;
+import com.smileyface.tastr.Utilities.CallHandler;
+import com.smileyface.tastr.Utilities.DownloadImageTask;
 import com.smileyface.tastr.Utilities.ItemLoader;
-import com.smileyface.tastr.Utilities.downloadImageTask;
-import com.smileyface.tastr.Utilities.locationHandler;
-import com.smileyface.tastr.Utilities.yelpDataExecutor;
+import com.smileyface.tastr.Utilities.LocationHandler;
+import com.smileyface.tastr.Utilities.YelpDataExecutor;
+import com.squareup.picasso.Picasso;
 
 import static java.lang.Thread.sleep;
 
 
 public class TouchActivity extends Activity {
     private String msg;
-    private ImageView img;
+    private ProgressBar loadSpinner;
     private RelativeLayout.LayoutParams layoutParams;
-    yelpDataExecutor yelp = new yelpDataExecutor();
-    locationHandler curLoc = new locationHandler(this);
+    final static private int minHeight = 500;
+    final static private int minWidth = 600;
+    YelpDataExecutor yelp = new YelpDataExecutor();
+    LocationHandler curLoc = new LocationHandler(this);
+
 
     private GoogleApiClient client;
-    private downloadImageTask imageLoader;
+    private DownloadImageTask imageLoader;
     ItemLoader itemLoader;
     TastrItem currentItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        //TODO: potential omitting list, do this after itemQueue is up and working
-        //load already liked items
-        //ignoreItems = loadLikes(); add to this list as food is yucked
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_touch);
-        // Connect to yelp and request a list of nearby restaurants
-        img = (ImageView) findViewById(R.id.img);
-        img.setScaleType(ImageView.ScaleType.FIT_XY);
-        ImageView yum = (ImageView) findViewById(R.id.yum);
-        ImageView yuck = (ImageView) findViewById(R.id.yuck);
+        loadSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+    }
 
-        img.setOnDragListener(new View.OnDragListener() {
+    public void setDragProps(ImageView image, ImageView green, ImageView red) {
+        image.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 switch (event.getAction()) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_STARTED");
-
-                        // Do nothing
-                        return true;
-
-
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_ENTERED");
-                        int x_cord = (int) event.getX();
-                        int y_cord = (int) event.getY();
-                        img.setVisibility(View.VISIBLE);
-                        return true;
-
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_EXITED");
-                        x_cord = (int) event.getX();
-                        y_cord = (int) event.getY();
-                        layoutParams.leftMargin = x_cord;
-                        layoutParams.topMargin = y_cord;
-                        v.setLayoutParams(layoutParams);
-                        img.setVisibility(View.VISIBLE);
-                        return true;
-
-                    case DragEvent.ACTION_DRAG_LOCATION:
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_LOCATION");
-                        v.setVisibility(View.VISIBLE);
-                        return true;
-
-
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        v.setVisibility(View.VISIBLE);
-                        break;
-
-
-                    case DragEvent.ACTION_DROP:
-                        Log.d(msg, "ACTION_DROP event");
-
-
-                        return true;
-
                     default:
                         return true;
                 }
-                return false;
             }
-
-
         });
 
-        yum.setOnDragListener(new View.OnDragListener() {
+        green.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 switch (event.getAction()) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_STARTED");
-
-                        // Do nothing
-                        return true;
-
-
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_ENTERED");
-                        int x_cord = (int) event.getX();
-                        int y_cord = (int) event.getY();
-                        return true;
-
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_EXITED");
-                        x_cord = (int) event.getX();
-                        y_cord = (int) event.getY();
-                        layoutParams.leftMargin = x_cord;
-                        layoutParams.topMargin = y_cord;
-                        v.setLayoutParams(layoutParams);
-                        return true;
-
-                    case DragEvent.ACTION_DRAG_LOCATION:
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_LOCATION");
-                        break;
-
                     case DragEvent.ACTION_DROP:
-
                         Log.d(msg, "Drag ended");
                         if (dropEventNotHandled(event)) {
                             v.setVisibility(View.VISIBLE);
                         }
-                        CharSequence options[] = new CharSequence[]{currentItem.getMenu().get(itemCount).getName(), currentItem.getAddress(), currentItem.getPhone()};
+                        CharSequence options[] = new CharSequence[]{currentItem.getMenu().get(itemCounter - 1).getName(), currentItem.getAddress(), currentItem.getPhone(), currentItem.getRating()};
+
+                        // create a google maps buffer in case the user wants to go to the restaurant found.
+                        final Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW,
+                                Uri.parse("google.navigation:q=an+" + currentItem.getAddress()));
+
+                        // create an internet link buffer in case they want to read the reviews on yelp
+                        Intent webIntent = new Intent(Intent.ACTION_VIEW);
+                        webIntent.setData(Uri.parse("https://www.yelp.com/biz/" + currentItem.getName() + "-" + currentItem.getCity()));
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(TouchActivity.this);
                         builder.setTitle(currentItem.getName());
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // add option to open address in google maps
+                                switch (which) {
+                                    case 1:
+                                        startActivity(mapIntent);
+                                        break;
+                                    case 2:
+                                        CallHandler call = new CallHandler(TouchActivity.this, currentItem.getPhone());
+                                        call.makePhoneCall();
+                                        break;
+                                    case 3:
+                                        break;
+                                    case 4:
+                                        break;
+                                }
                             }
                         });
                         builder.show();
-
-
                         break;
-
-
                     default:
                         return true;
                 }
-
                 return false;
             }
         });
 
 
-        yuck.setOnDragListener(new View.OnDragListener() {
+        red.setOnDragListener(new View.OnDragListener() {
             int i = 0;
-
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 switch (event.getAction()) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_STARTED");
-
-                        // Do nothing
-                        return true;
-
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_ENTERED");
-                        int x_cord = (int) event.getX();
-                        int y_cord = (int) event.getY();
-                        return true;
-
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_EXITED");
-                        x_cord = (int) event.getX();
-                        y_cord = (int) event.getY();
-                        layoutParams.leftMargin = x_cord;
-                        layoutParams.topMargin = y_cord;
-                        v.setLayoutParams(layoutParams);
-                        return true;
-
-                    case DragEvent.ACTION_DRAG_LOCATION:
-                        Log.d(msg, "Action is DragEvent.ACTION_DRAG_LOCATION");
-                        break;
-
                     case DragEvent.ACTION_DROP:
                         showNextImage();
+                        v.setVisibility(View.VISIBLE);
+                        onCreate(null);
                         Log.d(msg, "Drag ended");
                         if (dropEventNotHandled(event)) {
                             v.setVisibility(View.VISIBLE);
                         }
-
                         break;
-
-
                     default:
                         return true;
                 }
-
                 return false;
             }
         });
 
 
-        img.setOnTouchListener(new View.OnTouchListener() {
+        image.setOnTouchListener(new View.OnTouchListener() {
             @Override
 
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    ClipData data = ClipData.newPlainText("", "");
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(img);
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.i("Touch Listener", "Action down triggered");
+                        ClipData data = ClipData.newPlainText("", "");
+                        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            v.startDragAndDrop(data, shadowBuilder, v, 100);
+                        } else //noinspection deprecation,deprecation,deprecation
+                            v.startDrag(data, shadowBuilder, v, 0);
+                    default:
+                        Log.i("Touch Listener", "default triggered");
+                        v.setVisibility(View.VISIBLE);
+                }
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        img.startDragAndDrop(data, shadowBuilder, img, 100);
-                    } else //noinspection deprecation,deprecation,deprecation
-                        img.startDrag(data, shadowBuilder, img, 100);
 
 
                     return true;
-                } else {
-                    return false;
                 }
-            }
+
 
         });
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private boolean dropEventNotHandled(DragEvent dragEvent) {
@@ -286,27 +201,43 @@ public class TouchActivity extends Activity {
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
-    int itemCount = 0;
+    int totalItems = 0;
+    int itemCounter = 0;
     int loadingError = 0;
 
     public void getNextRestaurant() {
+        itemCounter = 0;
         currentItem = itemLoader.getNextItem();
-        itemCount = currentItem.getMenu().size() - 1;
+        totalItems = currentItem.getMenu().size() - 1;
         showNextImage();
     }
 
     public void showNextImage() {
-        downloadImageTask imageLoader = new downloadImageTask(img);
-        if (!currentItem.getMenu().isEmpty() && currentItem.getMenu().size() > itemCount) {
-            Log.i("Touch Activity ", "Loading New Image ---> " + currentItem.getMenu().get(itemCount).getImagePath());
-            imageLoader.execute(currentItem.getMenu().get(itemCount).getImagePath());
-            itemCount++;
-        } else {
-            Log.i("Touch Activity ", "Can't find any images to download, loading next restaurant... ");
-            getNextRestaurant();
-            }
-        }
+        ImageView yum = (ImageView) findViewById(R.id.yum);
+        ImageView yuck = (ImageView) findViewById(R.id.yuck);
+        ImageView img = (ImageView) findViewById(R.id.img);
 
+        setDragProps(img, yum, yuck);
+        loadSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
+        loadSpinner.setVisibility(View.VISIBLE);
+
+
+        //DownloadImageTask imageLoader = new DownloadImageTask(img);
+        if (!currentItem.getMenu().isEmpty() && currentItem.getMenu().size() > itemCounter) {
+            Picasso.with(this).load(currentItem.getMenu().get(itemCounter).getImagePath()).into(img);
+            img.getLayoutParams().height = minHeight;
+            img.getLayoutParams().width = minWidth;
+            img.setVisibility(View.VISIBLE);
+            loadSpinner.setVisibility(View.GONE);
+            Log.i("Touch Activity ", "Loading New Image ---> " + currentItem.getMenu().get(itemCounter).getImagePath() + " From " + currentItem.getName());
+
+            itemCounter++;
+
+        } else {
+            Log.i("Touch Activity ", "Can't find any more images to download from " + currentItem.getName() + ". Loading next restaurant... ");
+            getNextRestaurant();
+        }
+    }
 
     @Override
     public void onStop() {

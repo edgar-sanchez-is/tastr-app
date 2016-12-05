@@ -7,20 +7,18 @@ import com.smileyface.tastr.Other.TastrItem;
 
 import java.util.ArrayList;
 
-import static java.lang.Thread.sleep;
-
 /**
  * Created by Remixt on 11/26/2016.
  */
 
 public class ItemLoader extends AsyncTask<String, Void, String> {
     private int counter = 0;
-    private firebaseHandler firebase;
-    private yelpDataExecutor yelp;
+    private FirebaseHandler firebase;
+    private YelpDataExecutor yelp;
     private ArrayList<TastrItem> itemList = new ArrayList<>();
     private boolean ready = false;
 
-    public ItemLoader(yelpDataExecutor yelpContext) {
+    public ItemLoader(YelpDataExecutor yelpContext) {
         yelp = yelpContext;
         Log.i("Item Loader ","Starting Database Operations...");
     }
@@ -55,13 +53,15 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
 
             TastrItem temp;
             // loop through each restaurant and add all the menu items from each one. I think we need to randomize this list later on to provide variety in the app.
-            firebase = new firebaseHandler("Tastr Items/" + yelp.getRestaurants().get(i)); //Change where in the database we want to search for information.
+            firebase = new FirebaseHandler("Tastr Items/" + yelp.getRestaurants().get(i)); //Change where in the database we want to search for information.
             firebase.readKeyFromDatabase();
             while (!firebase.isReaderDone()) {
 
                 }
-            temp = firebase.getTastrItem();
-            itemList.add(temp);
+            if (firebase.getTastrItem()!=null) {
+                temp = firebase.getTastrItem();
+                itemList.add(temp);
+            }
             /*
                 Log.i("Item Loader", "Checking for Menu at:  Tastr Items/" + temp.getRestaurant() + "/Menu/");
                 TastrItem temp1 = new TastrItem();
@@ -73,7 +73,7 @@ public class ItemLoader extends AsyncTask<String, Void, String> {
                 //temp.setMenu(firebase.getReaderList());
                 for (int k = 0; k < temp.getMenu().size(); k++) {
 
-                    firebase = new firebaseHandler("Tastr Items/" + temp.getRestaurant() + "/Menu/" + temp.getMenu().get(k) + "/Image Path");
+                    firebase = new FirebaseHandler("Tastr Items/" + temp.getRestaurant() + "/Menu/" + temp.getMenu().get(k) + "/Image Path");
                     Log.i("Item Loader", "Reference added: Tastr Items/" + temp.getRestaurant() + "/Menu/" + temp.getMenu().get(k) + "/Image Path" );
                     temp.addImagePath(firebase.readValueFromDatabase());
                 }

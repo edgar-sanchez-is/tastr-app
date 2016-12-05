@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by Remixt on 10/23/2016.
  */
 
-public class yelpDataExecutor extends AsyncTask<String, Void, String> {
+public class YelpDataExecutor extends AsyncTask<String, Void, String> {
 
     boolean hasNewData = false;
 
@@ -96,7 +96,7 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
         restaurants = YelpAPI.getNameList();
         emptyMenu.add(new MenuItem());
 
-        firebaseHandler firebase = new firebaseHandler("Tastr Items");
+        FirebaseHandler firebase = new FirebaseHandler("Tastr Items");
         for (int i = 0; i < numberOfBusinesses; i++) {
 
             TastrItem newItem = new TastrItem();
@@ -106,7 +106,8 @@ public class yelpDataExecutor extends AsyncTask<String, Void, String> {
             newItem.setAddress(addresses.get(i).replaceAll("[.#$\\]\\\\\\[]", ""));
             newItem.setName(restaurants.get(i));
             newItem.setMenu(emptyMenu);
-            firebase.writeTastrToDatabase(restaurants.get(i), newItem);
+            // only enable this if you want to risk overwritin data in firebase.
+            // firebase.writeTastrToDatabase(restaurants.get(i), newItem);
 
         }//for
 

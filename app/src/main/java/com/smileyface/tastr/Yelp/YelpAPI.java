@@ -252,7 +252,7 @@ public class YelpAPI implements Runnable {
             JSONObject temp = (JSONObject) businesses.get(i);
             JSONObject temp1 = (JSONObject) temp.get("location");
             BusinessIDList.add(temp.get("id").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
-            RatingList.add(temp.get("rating").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
+            RatingList.add(temp.get("rating").toString());
             cityList.add(temp1.get("city").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
             stateList.add(temp1.get("state_code").toString().replaceAll("[.#$\\]\\\\\\[]", ""));
             phoneList.add(temp.get("phone").toString().replaceAll("[.#$\\]\\\\\\[]", ""));

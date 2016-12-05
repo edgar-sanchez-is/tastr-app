@@ -11,13 +11,25 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.smileyface.tastr.Activities.TouchActivity">
 
+    <ProgressBar
+        style="@android:style/Widget.Material.Light.ProgressBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/loadingSpinner"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
     <ImageView
         android:layout_height="250dp"
         app:srcCompat="@color/common_google_signin_btn_text_dark_default"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/img"
-        android:layout_width="300dp" />
+        android:layout_width="300dp"
+        android:contentDescription=""
+        android:visibility="visible" />
 
     <ImageView
         app:srcCompat="@android:color/holo_red_dark"
