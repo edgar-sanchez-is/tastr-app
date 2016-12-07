@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,6 +28,7 @@ import com.smileyface.tastr.Utilities.LocationHandler;
 import com.smileyface.tastr.Utilities.YelpDataExecutor;
 import com.squareup.picasso.Picasso;
 
+import static com.smileyface.tastr.R.id.img;
 import static java.lang.Thread.sleep;
 
 
@@ -36,9 +38,12 @@ public class TouchActivity extends Activity {
     //private RelativeLayout.LayoutParams layoutParams;
     final static private int minHeight = 500;
     final static private int minWidth = 600;
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     YelpDataExecutor yelp = new YelpDataExecutor();
     LocationHandler curLoc = new LocationHandler(this);
 
+    GestureDetector gdt;
 
     private GoogleApiClient client;
     //private DownloadImageTask imageLoader;
@@ -67,7 +72,9 @@ public class TouchActivity extends Activity {
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
         loadSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
         loadSpinner.setVisibility(View.VISIBLE);
+
     }
+
 
     public void setDragProps(ImageView image, ImageView green, ImageView red) {
         image.setOnDragListener(new View.OnDragListener() {
@@ -149,30 +156,34 @@ public class TouchActivity extends Activity {
             }
         });
 
-
+        gdt = new GestureDetector(new GestureListener());
         image.setOnTouchListener(new View.OnTouchListener() {
             @Override
 
             public boolean onTouch(View v, MotionEvent event) {
+                gdt.onTouchEvent(event);
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         Log.i("Touch Listener", "Action down triggered");
                         ClipData data = ClipData.newPlainText("", "");
                         View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
                             v.startDrag(data, shadowBuilder, v, 0);
+
+
                     default:
                         Log.i("Touch Listener", "default triggered");
                         v.setVisibility(View.VISIBLE);
+
                 }
 
 
-
-                    return true;
+                return true;
                 }
 
 
         });
     }
+
 
     private boolean dropEventNotHandled(DragEvent dragEvent) {
         return !dragEvent.getResult();
@@ -212,8 +223,7 @@ public class TouchActivity extends Activity {
         ImageView yum = (ImageView) findViewById(R.id.yum);
         ImageView yuck = (ImageView) findViewById(R.id.yuck);
         ImageView img = (ImageView) findViewById(R.id.img);
-        ImageView stn = (ImageView) findViewById(R.id.settingsImg);
-        stn.setVisibility(View.VISIBLE);
+        yuck.setVisibility(View.VISIBLE);
 
         setDragProps(img, yum, yuck);
 
@@ -233,6 +243,19 @@ public class TouchActivity extends Activity {
             getNextRestaurant();
         }
         }
+
+
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                return false; // Bottom to top
+            } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                return false; // Top to bottom
+            }
+            return false;
+        }
+    }
 
     @Override
     public void onStop() {

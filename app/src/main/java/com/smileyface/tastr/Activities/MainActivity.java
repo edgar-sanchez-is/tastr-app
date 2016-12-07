@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             }
         });
-
+//
     }//On Create
 
 }//MainActivity Class
