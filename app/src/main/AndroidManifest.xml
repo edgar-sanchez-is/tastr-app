@@ -49,14 +49,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".Activities.activity_tastr_settings"
-            android:label="@string/title_activity_tastr_settings"
-            android:parentActivityName=".Activities.TouchActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.smileyface.tastr.Activities.TouchActivity" />
-        </activity>
     </application>
 
 </manifest>

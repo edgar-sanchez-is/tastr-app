@@ -12,13 +12,34 @@
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin">
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/settingsIcon"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            app:srcCompat="@drawable/yuck"
+            android:id="@+id/yuck"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:src="@drawable/yuck"
+            android:layout_height="71dp"
+            android:layout_below="@+id/settingsIcon"
+            android:adjustViewBounds="false"
+            android:scrollbarSize="0dp"
+            android:scrollbarFadeDuration="0"
+            android:scrollbarDefaultDelayBeforeFade="0" />
+    </LinearLayout>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/settings"
-        android:id="@+id/settings"
+        android:id="@+id/settingsIcon"
         android:src="@drawable/settings"
-        android:onClick="@string/title_activity_settings" />
+        android:elevation="0dp" />
 
     <ProgressBar
         android:layout_width="match_parent"
@@ -74,27 +95,6 @@
             android:visibility="visible"
             android:src="@drawable/yum"
             android:layout_height="71dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/settings"
-        android:layout_toRightOf="@+id/loadingSpinner"
-        android:layout_toEndOf="@+id/loadingSpinner"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            app:srcCompat="@drawable/yuck"
-            android:id="@+id/yuck"
-            android:visibility="visible"
-            android:layout_width="match_parent"
-            android:src="@drawable/yuck"
-            android:layout_height="71dp"
-            android:layout_below="@+id/settings"
-            android:layout_toRightOf="@+id/loadingSpinner"
-            android:layout_toEndOf="@+id/loadingSpinner" />
     </LinearLayout>
 
 </RelativeLayout>

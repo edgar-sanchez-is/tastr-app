@@ -59,7 +59,13 @@ public class TouchActivity extends Activity {
         yelp.execute(curLoc.getCurrentLat(), curLoc.getCurrentLong());
         itemLoader = new ItemLoader(yelp);
         itemLoader.execute();
-
+        ImageView goToSettings = (ImageView) findViewById(R.id.settingsIcon);
+        goToSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //startActivity(new Intent(TouchActivity.this, MainActivity.class));
+            }
+        });
         // Instantiate background process, connect to firebase and fill the Tastr Item queue
 
         // Wait for an item to be added before trying to load an image into the gui.
@@ -254,6 +260,7 @@ public class TouchActivity extends Activity {
         }
     }
 
+
     @Override
     public void onStop() {
         super.onStop();
@@ -281,6 +288,13 @@ public class TouchActivity extends Activity {
                 sleep(100); // wait 100 ms before checking again, saves cpu
             } catch (InterruptedException e) {
                 e.printStackTrace(); // if there is a problem while sleeping, print out the errors encountered.
+            }
+            if (curLoc.getCurrentLat() == null) {
+                try {
+                    sleep(1000); // wait 1000 ms before checking again, saves cpu
+                } catch (InterruptedException e) {
+                    e.printStackTrace(); // if there is a problem while sleeping, print out the errors encountered.
+                }
             }
 
             return null;
