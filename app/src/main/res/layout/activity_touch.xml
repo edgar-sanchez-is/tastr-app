@@ -4,14 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_touch"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.smileyface.tastr.Activities.TouchActivity"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="wrap_content"
-    app:layout_behavior="@string/action_settings">
+    app:layout_behavior="@string/action_settings"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/settings"
+        android:id="@+id/settings"
+        android:src="@drawable/settings"
+        android:onClick="@string/title_activity_settings" />
 
     <ProgressBar
         android:layout_width="match_parent"
@@ -23,74 +30,71 @@
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="0dp"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:indeterminateDuration="@integer/google_play_services_version"
+        android:keepScreenOn="true"
+        android:maxHeight="10dp"
+        android:maxWidth="10dp"
+        android:minHeight="10dp"
+        android:minWidth="10dp" />
 
-    <ImageView
-        app:srcCompat="@color/common_google_signin_btn_text_dark_default"
-        android:id="@+id/img"
-        android:layout_width="wrap_content"
-        android:contentDescription=""
-        android:visibility="visible"
-        android:clickable="true"
-        tools:layout_editor_absoluteY="107dp"
-        tools:layout_editor_absoluteX="8dp"
-        android:scaleType="fitXY"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:minWidth="300dp"
-        android:minHeight="250dp"
-        android:maxWidth="450dp"
-        android:maxHeight="250dp"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_toRightOf="@+id/loadingSpinner"
+        android:layout_toEndOf="@+id/loadingSpinner"
+        android:layout_height="275dp">
 
-    <ImageView
-        android:id="@+id/yuck"
-        tools:ignore="ContentDescription"
-        android:background="@android:color/transparent"
-        android:layout_weight="1"
-        android:minHeight="50dp"
-        android:maxHeight="50dp"
-        android:layout_width="match_parent"
-        android:layout_x="61dp"
-        android:layout_y="21dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="wrap_content"
-        android:maxWidth="300dp"
-        android:minWidth="300dp"
-        android:scaleType="fitXY"
-        android:visibility="visible"
-        android:src="@drawable/yuck"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@android:color/transparent"
+            android:id="@+id/img"
+            android:layout_weight="0.62"
+            android:layout_gravity="fill_vertical|fill_horizontal" />
+    </LinearLayout>
 
-    <ImageView
-        app:srcCompat="@drawable/yum"
-        android:id="@+id/yum"
-        tools:ignore="ContentDescription"
-        android:background="@android:color/transparent"
-        android:maxHeight="50dp"
-        android:minHeight="50dp"
-        android:layout_row="2"
-        android:layout_column="0"
-        android:layout_weight="1"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_x="31dp"
-        android:layout_y="100dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:minWidth="320dp"
-        android:maxWidth="320dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/yum"
+        android:layout_weight="1"
+        android:layout_marginBottom="25dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="32dp" />
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            app:srcCompat="@drawable/yum"
+            android:id="@+id/yum"
+            android:layout_alignParentBottom="false"
+            android:layout_centerHorizontal="false"
+            android:visibility="visible"
+            android:src="@drawable/yum"
+            android:layout_height="71dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/settings"
+        android:layout_toRightOf="@+id/loadingSpinner"
+        android:layout_toEndOf="@+id/loadingSpinner"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            app:srcCompat="@drawable/yuck"
+            android:id="@+id/yuck"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:src="@drawable/yuck"
+            android:layout_height="71dp"
+            android:layout_below="@+id/settings"
+            android:layout_toRightOf="@+id/loadingSpinner"
+            android:layout_toEndOf="@+id/loadingSpinner" />
+    </LinearLayout>
 
 </RelativeLayout>

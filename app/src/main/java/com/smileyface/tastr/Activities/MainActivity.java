@@ -26,11 +26,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        sActivityButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-            }
-        });
 //
     }//On Create
 

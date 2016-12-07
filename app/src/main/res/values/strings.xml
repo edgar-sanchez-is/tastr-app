@@ -94,4 +94,5 @@
         completions."
     </string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_tastr_settings">TastrSettingsActivity</string>
 </resources>

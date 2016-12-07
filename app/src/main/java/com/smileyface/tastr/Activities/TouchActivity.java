@@ -28,7 +28,6 @@ import com.smileyface.tastr.Utilities.LocationHandler;
 import com.smileyface.tastr.Utilities.YelpDataExecutor;
 import com.squareup.picasso.Picasso;
 
-import static com.smileyface.tastr.R.id.img;
 import static java.lang.Thread.sleep;
 
 
@@ -41,8 +40,8 @@ public class TouchActivity extends Activity {
     private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     YelpDataExecutor yelp = new YelpDataExecutor();
-    LocationHandler curLoc = new LocationHandler(this);
 
+    LocationHandler curLoc = new LocationHandler(this);
     GestureDetector gdt;
 
     private GoogleApiClient client;
@@ -220,21 +219,19 @@ public class TouchActivity extends Activity {
     }
 
     public void showNextImage() {
-        ImageView yum = (ImageView) findViewById(R.id.yum);
         ImageView yuck = (ImageView) findViewById(R.id.yuck);
+        ImageView yum = (ImageView) findViewById(R.id.yum);
         ImageView img = (ImageView) findViewById(R.id.img);
-        yuck.setVisibility(View.VISIBLE);
-
         setDragProps(img, yum, yuck);
-
+        loadSpinner = (ProgressBar) findViewById(R.id.loadingSpinner);
+        loadSpinner.setVisibility(View.VISIBLE);
         //DownloadImageTask imageLoader = new DownloadImageTask(img);
         // if (currentItem != null) {
         if (!currentItem.getMenu().isEmpty() && currentItem.getMenu().size() > itemCounter) {
             Picasso.with(this).load(currentItem.getMenu().get(itemCounter).getImagePath()).into(img);
-            img.getLayoutParams().height = minHeight;
-            img.getLayoutParams().width = minWidth;
-            img.setVisibility(View.VISIBLE);
             loadSpinner.setVisibility(View.GONE);
+            img.setVisibility(View.VISIBLE);
+
             Log.i("Touch Activity ", "Loading New Image ---> " + currentItem.getMenu().get(itemCounter).getImagePath() + " From " + currentItem.getName());
             itemCounter++;
 
