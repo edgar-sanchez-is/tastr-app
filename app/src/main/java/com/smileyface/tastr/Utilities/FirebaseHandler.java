@@ -190,7 +190,7 @@ public class FirebaseHandler {
                 tempItem = dataSnapshot.getValue(TastrItem.class);
                 readerDone = true;
                 // lets you know if the database found the item you were looking for, will say "returning null" if nothing was found.
-                Log.w("Firebase Handler", "Returning " + tempItem.getName());
+                //Log.w("Firebase Handler", "Returning " + tempItem.getName());
             }
 
             @Override
