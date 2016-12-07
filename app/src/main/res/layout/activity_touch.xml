@@ -29,7 +29,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="29dp"
-        app:srcCompat="@drawable/settings"
+        app:srcCompat="@mipmap/ic_settings"
         android:id="@+id/settingsImg"
         android:clickable="true"
         android:layout_row="24"
@@ -45,31 +45,10 @@
         android:layout_alignParentStart="true" />
 
     <ImageView
-        app:srcCompat="@android:color/holo_red_dark"
-        android:id="@+id/yuck"
-        tools:ignore="ContentDescription"
-        android:background="@android:color/holo_red_dark"
-        android:layout_weight="1"
-        android:minHeight="50dp"
-        android:maxHeight="50dp"
-        android:layout_width="match_parent"
-        android:layout_x="61dp"
-        android:layout_y="21dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="wrap_content"
-        android:maxWidth="320dp"
-        android:minWidth="320dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <ImageView
-        app:srcCompat="@android:color/holo_green_dark"
+        app:srcCompat="@drawable/yum"
         android:id="@+id/yum"
         tools:ignore="ContentDescription"
-        android:background="@android:color/holo_green_dark"
+        android:background="@android:color/transparent"
         android:maxHeight="50dp"
         android:minHeight="50dp"
         android:layout_row="2"
@@ -85,6 +64,29 @@
         android:minWidth="320dp"
         android:maxWidth="320dp"
         android:layout_above="@+id/settingsImg"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:scaleType="centerCrop" />
+
+    <ImageView
+        app:srcCompat="@drawable/yuck"
+        android:id="@+id/yuck"
+        tools:ignore="ContentDescription"
+        android:background="@android:color/transparent"
+        android:layout_weight="1"
+        android:minHeight="50dp"
+        android:maxHeight="50dp"
+        android:layout_width="match_parent"
+        android:layout_x="61dp"
+        android:layout_y="21dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content"
+        android:maxWidth="320dp"
+        android:minWidth="320dp"
+        android:scaleType="centerCrop"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
